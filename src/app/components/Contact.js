@@ -1,6 +1,46 @@
+"use client"
+
+import { useState } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 
 export default function Contact() {
+  const [message, setMessage] = useState("")
+  const [status, setStatus] = useState({ type: "", text: "" })
+  const [isSending, setIsSending] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const trimmed = message.trim()
+    if (!trimmed) {
+      setStatus({ type: "error", text: "Please type a message first." })
+      return
+    }
+
+    try {
+      setIsSending(true)
+      setStatus({ type: "", text: "" })
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmed }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || "Failed to send message.")
+
+      setMessage("")
+      setStatus({ type: "success", text: "Message sent successfully." })
+    } catch (err) {
+      setStatus({
+        type: "error",
+        text: err?.message || "Something went wrong while sending.",
+      })
+    } finally {
+      setIsSending(false)
+    }
+  }
+
   return (
     <section id="contact" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
@@ -22,7 +62,7 @@ export default function Contact() {
         <FadeInWhenVisible delay={0.08}>
           <form
             className="rounded-3xl border border-slate-200/70 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex-1">
@@ -33,8 +73,21 @@ export default function Contact() {
                   id="message"
                   rows={3}
                   placeholder="Type your message here..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="w-full resize-none rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-sky-500/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
                 />
+                {status.text && (
+                  <p
+                    className={`mt-3 text-sm ${
+                      status.type === "success"
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {status.text}
+                  </p>
+                )}
 
                 <div className="mt-4 flex items-center gap-4 text-slate-600 dark:text-slate-300">
                   <a
@@ -67,9 +120,10 @@ export default function Contact() {
 
               <button
                 type="submit"
+                disabled={isSending}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-white"
               >
-                Send Message
+                {isSending ? "Sending..." : "Send Message"}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"

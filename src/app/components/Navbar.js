@@ -23,36 +23,141 @@ export default function Navbar() {
     const saved = window.localStorage.getItem(THEME_STORAGE_KEY)
     if (saved === "dark") document.documentElement.classList.add("dark")
     else document.documentElement.classList.remove("dark")
+    console.warn("[THEME-DBG][H1] mount", {
+      saved,
+      htmlHasDarkClass: document.documentElement.classList.contains("dark"),
+      prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
+      bodyColor: getComputedStyle(document.body).color,
+    })
+    // #region agent log
+    fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "1f59da",
+      },
+      body: JSON.stringify({
+        sessionId: "1f59da",
+        runId: "theme-debug-1",
+        hypothesisId: "H1",
+        location: "Navbar.js:mount-useEffect",
+        message: "Applied theme from localStorage on mount",
+        data: {
+          saved,
+          htmlHasDarkClass: document.documentElement.classList.contains("dark"),
+          prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
 
-    const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(
-      Boolean
-    )
+    const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean)
     if (sections.length === 0) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (visible[0]?.target?.id) {
-          setActive(visible[0].target.id)
-        }
-      },
-      {
-        rootMargin: "-92px 0px -45% 0px",
-        threshold: [0, 0.1, 0.25, 0.5, 1],
-      }
-    )
+    // Use the viewport "focus line" so nav state switches predictably by scroll position.
+    let rafId = null
+    const updateActiveByScroll = () => {
+      const focusY = window.scrollY + 140
+      let current = sections[0].id
 
-    sections.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+      for (const section of sections) {
+        if (section.offsetTop <= focusY) current = section.id
+        else break
+      }
+      setActive(current)
+      rafId = null
+    }
+
+    const onScrollOrResize = () => {
+      if (rafId !== null) return
+      rafId = window.requestAnimationFrame(updateActiveByScroll)
+    }
+
+    updateActiveByScroll()
+    window.addEventListener("scroll", onScrollOrResize, { passive: true })
+    window.addEventListener("resize", onScrollOrResize)
+
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize)
+      window.removeEventListener("resize", onScrollOrResize)
+      if (rafId !== null) window.cancelAnimationFrame(rafId)
+    }
   }, [])
 
   const toggleTheme = () => {
+    const beforeHasDark = document.documentElement.classList.contains("dark")
+    const beforeStored = window.localStorage.getItem(THEME_STORAGE_KEY)
     const nextIsDark = !document.documentElement.classList.contains("dark")
     if (nextIsDark) document.documentElement.classList.add("dark")
     else document.documentElement.classList.remove("dark")
     window.localStorage.setItem(THEME_STORAGE_KEY, nextIsDark ? "dark" : "light")
+    console.warn("[THEME-DBG][H2] toggle immediate", {
+      beforeHasDark,
+      afterHasDark: document.documentElement.classList.contains("dark"),
+      nextIsDark,
+      beforeStored,
+      afterStored: window.localStorage.getItem(THEME_STORAGE_KEY),
+      bodyColor: getComputedStyle(document.body).color,
+    })
+    // #region agent log
+    fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "1f59da",
+      },
+      body: JSON.stringify({
+        sessionId: "1f59da",
+        runId: "theme-debug-1",
+        hypothesisId: "H2",
+        location: "Navbar.js:toggleTheme",
+        message: "Theme toggled and localStorage updated",
+        data: {
+          beforeHasDark,
+          afterHasDark: document.documentElement.classList.contains("dark"),
+          nextIsDark,
+          beforeStored,
+          afterStored: window.localStorage.getItem(THEME_STORAGE_KEY),
+          prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
+
+    requestAnimationFrame(() => {
+      const main = document.querySelector("main")
+      const bodyColor = getComputedStyle(document.body).color
+      const mainColor = main ? getComputedStyle(main).color : null
+      console.warn("[THEME-DBG][H3] toggle raf", {
+        htmlHasDarkClass: document.documentElement.classList.contains("dark"),
+        bodyColor,
+        mainColor,
+      })
+      // #region agent log
+      fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "1f59da",
+        },
+        body: JSON.stringify({
+          sessionId: "1f59da",
+          runId: "theme-debug-1",
+          hypothesisId: "H3",
+          location: "Navbar.js:toggleTheme:raf",
+          message: "Computed colors after theme toggle",
+          data: {
+            htmlHasDarkClass: document.documentElement.classList.contains("dark"),
+            bodyColor,
+            mainColor,
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {})
+      // #endregion
+    })
   }
 
   return (

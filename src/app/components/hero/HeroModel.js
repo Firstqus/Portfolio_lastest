@@ -6,10 +6,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 function SharkModel({ mouse }) {
   const group = useRef();
-  const { scene } = useGLTF("/cyber_samurai.glb");
+  const { scene } = useGLTF("/robot_shark.glb");
+  const introProgress = useRef(0);
 
   useFrame((_, delta) => {
     if (!group.current) return;
+
+    // Intro zoom-out: start slightly larger, then settle to normal scale.
+    introProgress.current = Math.min(1, introProgress.current + delta / 1.2);
+    const eased = 1 - (1 - introProgress.current) ** 3;
+    const scale = 1.28 - 0.28 * eased;
+    group.current.scale.setScalar(scale);
 
     // Smooth follow: target rotations derived from normalized mouse coordinates.
     const targetX = mouse.current.x * 0.35;
@@ -24,7 +31,7 @@ function SharkModel({ mouse }) {
   return <primitive ref={group} object={scene} dispose={null} />;
 }
 
-useGLTF.preload("/cyber_samurai.glb");
+useGLTF.preload("/robot_shark.glb");
 
 export default function HeroModel() {
   const mouse = useRef({ x: 0, y: 0 });
@@ -46,7 +53,7 @@ export default function HeroModel() {
   };
 
   const canvasStyle = useMemo(
-    () => ({ width: "110%", height: "110%" }),
+    () => ({ width: "100%", height: "100%" }),
     []
   );
 
