@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #f8fafc;
-  --dot: rgba(56, 189, 248, 0.18);
-  --line: rgba(56, 189, 248, 0.12);
+ :root {
+  /* Light theme: keep readable but less "white" and more deep blue. */
+  --bg: #dbeafe;
+  --dot: rgba(56, 189, 248, 0.13);
+  --line: rgba(56, 189, 248, 0.09);
   --cursor-glow-rgb: 56, 189, 248; /* sky/cyan */
 
   --mesh-1: rgba(56, 189, 248, 0.28);
@@ -24,6 +25,11 @@ html.dark {
 
 body {
   background-color: var(--bg);
+  color: #0f172a; /* slate-900 */
+}
+
+html.dark body {
+  color: #f8fafc; /* slate-50 */
 }
 
 html {

@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 function SharkModel({ mouse }) {
   const group = useRef();
-  const { scene } = useGLTF("/robot_shark.glb");
+  const { scene } = useGLTF("/cyber_samurai.glb");
 
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -24,7 +24,7 @@ function SharkModel({ mouse }) {
   return <primitive ref={group} object={scene} dispose={null} />;
 }
 
-useGLTF.preload("/robot_shark.glb");
+useGLTF.preload("/cyber_samurai.glb");
 
 export default function HeroModel() {
   const mouse = useRef({ x: 0, y: 0 });
