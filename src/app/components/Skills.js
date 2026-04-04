@@ -29,6 +29,17 @@ const skills = [
       { name: "Node.js", icon: "devicon-nodejs-plain colored" },
     ],
   },
+
+  {
+    category: "OS & Tool",
+    items: [
+      { name: "Kalilinux", icon:"devicon-kalilinux-original colored"},
+      { name: "Unity", icon:"devicon-unity-plain colored"},
+      { name: "Git", icon:"devicon-git-plain colored"},
+      { name: "VS code", icon:"devicon-vscode-plain colored"},
+      { name: "Vercel", icon:"devicon-vercel-original"},
+    ],
+  },
 ]
 
 export default function Skills() {
