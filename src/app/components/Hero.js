@@ -4,8 +4,8 @@ import FadeInWhenVisible from "./FadeInWhenVisible"
 import HeroModel from "./hero/HeroModel"
 
 const QUOTE =
-  "Failure never stopped my journey. It sharpened my thinking, strengthened my discipline, and pushed me to become a better version of myself."
-const AUTHOR = "Zin Hmue Paing"
+  "It does not matter how slowly you go as long as you do not stop."
+const AUTHOR = "Confucius"
 
 export default function Hero() {
   return (
