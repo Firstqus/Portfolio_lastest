@@ -23,7 +23,7 @@ const IMMUNE_KNIGHT_GALLERY = [
 const projects = [
   {
     title: "Spirit Slayer",
-    github: "https://github.com/Firstqus",
+    github: "https://patawee.itch.io/spirit-slayer-demo",
     gallery: SPIRIT_SLAYER_GALLERY,
     image: SPIRIT_SLAYER_GALLERY[0],
     tech: ["Unity", "C#", "Action"],
@@ -41,7 +41,7 @@ const projects = [
   },
   {
     title: "Immune Knight",
-    github: "https://github.com/Firstqus",
+    github: "https://github.com/Firstqus/white-blood-cell-game",
     gallery: IMMUNE_KNIGHT_GALLERY,
     image: IMMUNE_KNIGHT_GALLERY[0],
     tech: ["Unity", "C#", "Game Design"],
@@ -49,7 +49,7 @@ const projects = [
       "Immune Knight is an educational tower defense game where players deploy real immune cells to fight off pathogens invading the body. Instead of just memorizing biology facts, players apply their knowledge in real time—making decisions under pressure the way your immune system actually does. Built as a submission for the TMH Innovation Competition, the game is designed to make immunology engaging, accurate, and interactive for students. That’s why we ranked top 24 teams in Thailand.",
   },
   {
-    title: "Game Vault web",
+    title: "https://github.com/Firstqus/game-review-web",
     github: "https://github.com/Firstqus",
     image: "/game-review.jpg",
     tech: ["React", "RAWG API"],
