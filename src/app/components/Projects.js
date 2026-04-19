@@ -49,8 +49,8 @@ const projects = [
       "Immune Knight is an educational tower defense game where players deploy real immune cells to fight off pathogens invading the body. Instead of just memorizing biology facts, players apply their knowledge in real time—making decisions under pressure the way your immune system actually does. Built as a submission for the TMH Innovation Competition, the game is designed to make immunology engaging, accurate, and interactive for students. That’s why we ranked top 24 teams in Thailand.",
   },
   {
-    title: "https://github.com/Firstqus/game-review-web",
-    github: "https://github.com/Firstqus",
+    title: "Game reveiws",
+    github: "https://github.com/Firstqus/game-review-web",
     image: "/game-review.jpg",
     tech: ["React", "RAWG API"],
     description:
