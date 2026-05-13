@@ -21,8 +21,9 @@ export default function Navbar() {
     // Apply theme class to <html> to let Tailwind `dark:` variants work.
     // Default is light; only switch to dark if the user previously selected it.
     const saved = window.localStorage.getItem(THEME_STORAGE_KEY)
-    if (saved === "dark") document.documentElement.classList.add("dark")
-    else document.documentElement.classList.remove("dark")
+    // Default to dark if no preference has been saved yet
+    if (saved === "light") document.documentElement.classList.remove("dark")
+    else document.documentElement.classList.add("dark")
     console.warn("[THEME-DBG][H1] mount", {
       saved,
       htmlHasDarkClass: document.documentElement.classList.contains("dark"),
