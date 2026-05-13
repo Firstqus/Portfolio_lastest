@@ -1,49 +1,126 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stage, useGLTF } from "@react-three/drei";
+import { Float, Sphere, Line } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion"; // เพิ่มไว้สำหรับ fade-in
+import { motion } from "framer-motion";
+import * as THREE from "three";
 
-function SharkModel({ mouse }) {
+function NeuralNetwork({ mouse }) {
   const group = useRef();
-  // เปลี่ยนชื่อไฟล์ตามที่คุณใช้ล่าสุด (cyber_samurai.glb)
-  const { scene } = useGLTF("/robot_shark.glb");
+  const nodesCount = 20;
   const introProgress = useRef(0);
 
-  useFrame((_, delta) => {
+  // Generate random nodes
+  const nodes = useMemo(() => {
+    return Array.from({ length: nodesCount }, () => ({
+      position: new THREE.Vector3(
+        (Math.random() - 0.5) * 5,
+        (Math.random() - 0.5) * 5,
+        (Math.random() - 0.5) * 5
+      ),
+      speed: Math.random() * 0.4 + 0.2,
+      offset: Math.random() * Math.PI * 2,
+    }));
+  }, []);
+
+  // Find connections (indices)
+  const connections = useMemo(() => {
+    const conns = [];
+    for (let i = 0; i < nodes.length; i++) {
+      let localCount = 0;
+      for (let j = i + 1; j < nodes.length; j++) {
+        if (nodes[i].position.distanceTo(nodes[j].position) < 3.5 && localCount < 2) {
+          conns.push(i, j);
+          localCount++;
+        }
+      }
+    }
+    return new Int32Array(conns);
+  }, [nodes]);
+
+  const nodeRefs = useRef([]);
+  const linesGeomRef = useRef();
+
+  useFrame((state, delta) => {
     if (!group.current) return;
 
-    // --- ส่วนที่ปรับปรุง: Zoom Out Effect ---
-    // เพิ่มความเร็วเป็น delta / 1.5 เพื่อให้ซูมออกนุ่มๆ
-    introProgress.current = Math.min(1, introProgress.current + delta / 2.5);
-    
-    // ใช้ easeOutQuart เพื่อให้ตอนจบมันค่อยๆ ช้าลงอย่างนิ่งๆ
+    // Intro Animation
+    introProgress.current = Math.min(1, introProgress.current + delta / 2);
     const eased = 1 - Math.pow(1 - introProgress.current, 4);
-    
-    // เริ่มต้นจาก scale 0.5 (เล็ก/อยู่ไกล) แล้วขยายออกมาที่ 1.0 (สเกลปกติของ Stage)
-    const scale = 0.5 + 0.5 * eased;
-    group.current.scale.setScalar(scale);
+    group.current.scale.setScalar(0.4 + 0.6 * eased);
 
-    // Smooth follow
-    const targetX = mouse.current.x * 0.35;
-    const targetY = mouse.current.y * 0.35;
+    // Mouse Follow
+    const targetX = mouse.current.x * 0.4;
+    const targetY = mouse.current.y * 0.4;
+    group.current.rotation.y += (targetX - group.current.rotation.y) * 3 * delta;
+    group.current.rotation.x += (targetY - group.current.rotation.x) * 3 * delta;
 
-    group.current.rotation.y += (targetX - group.current.rotation.y) * 4.5 * delta;
-    group.current.rotation.x += (targetY - group.current.rotation.x) * 4.5 * delta;
+    const time = state.clock.getElapsedTime();
+    const linePositions = linesGeomRef.current.attributes.position.array;
+
+    // Update Nodes
+    nodes.forEach((node, i) => {
+      if (nodeRefs.current[i]) {
+        const yOffset = Math.sin(time * node.speed + node.offset) * 0.15;
+        const xOffset = Math.cos(time * node.speed * 0.5 + node.offset) * 0.1;
+        nodeRefs.current[i].position.copy(node.position).add(new THREE.Vector3(xOffset, yOffset, 0));
+      }
+    });
+
+    // Update Lines to match Nodes
+    for (let i = 0; i < connections.length; i++) {
+      const nodeIndex = connections[i];
+      const pos = nodeRefs.current[nodeIndex].position;
+      linePositions[i * 3] = pos.x;
+      linePositions[i * 3 + 1] = pos.y;
+      linePositions[i * 3 + 2] = pos.z;
+    }
+    linesGeomRef.current.attributes.position.needsUpdate = true;
   });
 
-  return <primitive ref={group} object={scene} dispose={null} />;
-}
+  return (
+    <group ref={group}>
+      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+        {/* Nodes */}
+        {nodes.map((node, i) => (
+          <Sphere
+            key={i}
+            ref={(el) => (nodeRefs.current[i] = el)}
+            args={[0.07, 12, 12]}
+            position={node.position}
+          >
+            <meshStandardMaterial
+              emissive="#22d3ee"
+              emissiveIntensity={2}
+              color="#0891b2"
+              toneMapped={false}
+            />
+          </Sphere>
+        ))}
 
-useGLTF.preload("/robot_shark.glb");
+        {/* Connections */}
+        <lineSegments>
+          <bufferGeometry ref={linesGeomRef}>
+            <bufferAttribute
+              attach="attributes-position"
+              count={connections.length}
+              array={new Float32Array(connections.length * 3)}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color="#22d3ee" transparent opacity={0.3} linewidth={1} />
+        </lineSegments>
+      </Float>
+    </group>
+  );
+}
 
 export default function HeroModel() {
   const mouse = useRef({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // ให้เวลาระบบจัดการ microtask เล็กน้อยก่อนเริ่มเล่น
     const timer = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(timer);
   }, []);
@@ -59,18 +136,15 @@ export default function HeroModel() {
     };
   };
 
-  const canvasStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
-
   if (!mounted) {
     return (
       <div className="flex h-[420px] items-center justify-center rounded-3xl bg-zinc-900/40">
-        <span className="text-xs text-zinc-500">Loading 3D model…</span>
+        <span className="text-xs text-zinc-500">Initializing Neural Network...</span>
       </div>
     );
   }
 
   return (
-    // เพิ่ม motion.div เพื่อให้ค่อยๆ จางมา (Fade In) พร้อมกับตอนซูมออก
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -79,21 +153,15 @@ export default function HeroModel() {
       className="relative h-[420px] w-full rounded-3xl bg-transparent"
     >
       <Canvas
-        style={{ ...canvasStyle, background: "transparent" }}
-        camera={{ position: [0, 0.4, 4], fov: 40 }}
+        camera={{ position: [0, 0, 8], fov: 45 }}
         dpr={[1, 2]}
-        gl={{ alpha: true, antialias: true, physicallyCorrectLights: true }}
-        onCreated={({ gl }) => {
-          gl.setClearColor(0x000000, 0);
-        }}
+        gl={{ alpha: true, antialias: true }}
       >
-        <ambientLight intensity={0.9} />
-        <directionalLight position={[6, 6, 4]} intensity={2.2} color={0x67e8f9} />
-        <directionalLight position={[-5, 2, -6]} intensity={1.0} color={0x60a5fa} />
-
-        <Stage environment={null} intensity={1.35} shadows={false}>
-          <SharkModel mouse={mouse} />
-        </Stage>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} color="#22d3ee" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#60a5fa" />
+        
+        <NeuralNetwork mouse={mouse} />
       </Canvas>
     </motion.div>
   );

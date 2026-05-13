@@ -4,8 +4,8 @@ import FadeInWhenVisible from "./FadeInWhenVisible"
 import HeroModel from "./hero/HeroModel"
 
 const QUOTE =
-  "It does not matter how slowly you go as long as you do not stop."
-const AUTHOR = "Confucius"
+  "A wise man learns from the mistakes of others."
+const AUTHOR = "Zhuge Liang"
 
 export default function Hero() {
   return (

@@ -9,6 +9,7 @@ import IntroLoader from "./components/IntroLoader"
 import CursorGlow from "./components/CursorGlow"
 import About from "./components/About"
 import Leadership from "./components/Leadership"
+import Achievements from "./components/Achievements"
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
         <Leadership />
         <Skills />
         <Projects />
+        <Achievements />
         <Contact />
       </main>
     </IntroLoader>

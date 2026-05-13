@@ -109,7 +109,7 @@ export default function Projects() {
               <div
                 className={[
                   "relative overflow-hidden bg-slate-50 dark:bg-white/5",
-                  idx === 2 ? "aspect-[9/16]" : idx <= 1 ? "aspect-[16/10]" : "aspect-[16/9]",
+                  idx === 2 ? "aspect-[4/5]" : idx <= 1 ? "aspect-[16/10]" : "aspect-[16/9]",
                 ].join(" ")}
               >
                 <Image
@@ -128,7 +128,7 @@ export default function Projects() {
                     idx <= 1
                       ? "object-cover p-0"
                       : idx === 2
-                        ? "object-contain p-0"
+                        ? "object-contain p-6"
                         : "object-contain p-10"
                   }
                 />
