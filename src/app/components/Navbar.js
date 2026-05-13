@@ -8,7 +8,6 @@ const links = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
-  { id: "achievements", label: "Achievements" },
   { id: "contact", label: "Contact" },
 ]
 
@@ -49,7 +48,7 @@ export default function Navbar() {
         },
         timestamp: Date.now(),
       }),
-    }).catch(() => {})
+    }).catch(() => { })
     // #endregion
 
     const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean)
@@ -123,7 +122,7 @@ export default function Navbar() {
         },
         timestamp: Date.now(),
       }),
-    }).catch(() => {})
+    }).catch(() => { })
     // #endregion
 
     requestAnimationFrame(() => {
@@ -155,7 +154,7 @@ export default function Navbar() {
           },
           timestamp: Date.now(),
         }),
-      }).catch(() => {})
+      }).catch(() => { })
       // #endregion
     })
   }
@@ -170,11 +169,10 @@ export default function Navbar() {
               <a
                 key={id}
                 href={`#${id}`}
-                className={`relative px-1 py-1 text-sm transition ${
-                  isActive
+                className={`relative px-1 py-1 text-sm transition ${isActive
                     ? "font-semibold text-sky-600 dark:text-sky-300"
                     : "text-slate-500 hover:text-slate-900 dark:text-slate-300/70 dark:hover:text-slate-50"
-                }`}
+                  }`}
               >
                 {label}
                 {isActive && (

@@ -8,7 +8,7 @@ import { motion } from "framer-motion"; // เพิ่มไว้สำหร�
 function SharkModel({ mouse }) {
   const group = useRef();
   // เปลี่ยนชื่อไฟล์ตามที่คุณใช้ล่าสุด (cyber_samurai.glb)
-  const { scene } = useGLTF("/cyber_samurai.glb");
+  const { scene } = useGLTF("/robot_shark.glb");
   const introProgress = useRef(0);
 
   useFrame((_, delta) => {
@@ -36,7 +36,7 @@ function SharkModel({ mouse }) {
   return <primitive ref={group} object={scene} dispose={null} />;
 }
 
-useGLTF.preload("/cyber_samurai.glb");
+useGLTF.preload("/robot_shark.glb");
 
 export default function HeroModel() {
   const mouse = useRef({ x: 0, y: 0 });
