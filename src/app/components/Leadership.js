@@ -7,6 +7,13 @@ import { useState } from "react"
 export default function Leadership() {
   const slides = [
     {
+      image: "/FromChangs.jpg",
+      title: "IT Clash 2026",
+      subtitle: "King mongkut's University of Technology Ladkrabang",
+      description:
+        "Gained hands-on experience with the Ragdoll physics system, team collaboration, and game debugging while developing 'FromChang', securing 3rd place among 12 finalist teams.",
+    },
+    {
       image: "/comcamp22.JPG",
       title: "Comcamp 37",
       subtitle: "King Mongkut's University of Technology Thonbur",

@@ -20,6 +20,13 @@ const IMMUNE_KNIGHT_GALLERY = [
   "/immune4.jpg",
 ]
 
+const FROMCHANG_GALLERY = [
+  "/FromChang1.jpg",
+  "/FromChang2.jpg",
+  "/FromChang3.jpg",
+  "/FromChang4.jpg",
+]
+
 const projects = [
   {
     title: "Spirit Slayer",
@@ -49,16 +56,26 @@ const projects = [
       "Immune Knight is an educational tower defense game where players deploy real immune cells to fight off pathogens invading the body. Instead of just memorizing biology facts, players apply their knowledge in real time—making decisions under pressure the way your immune system actually does. Built as a submission for the TMH Innovation Competition, the game is designed to make immunology engaging, accurate, and interactive for students. That’s why we ranked top 24 teams in Thailand.",
   },
   {
-    title: "Game reveiws",
-    github: "https://github.com/Firstqus/game-review-web",
-    image: "/game-review.jpg",
-    tech: ["React", "RAWG API"],
+    title: "FromChang",
+    github: "https://nanil3as.itch.io/formchang67",
+    gallery: FROMCHANG_GALLERY,
+    image: FROMCHANG_GALLERY[0],
+    tech: ["Unity", "C#", "Multiplayer"],
     description:
-      "A game discovery web app built with React. Browse thousands of games, search by name, filter by genre, and save your favorites to a personal wishlist — all powered by the RAWG API.",
+      "Gained hands-on experience with the Ragdoll physics system, team collaboration, and game debugging while developing 'FromChang', securing 3rd place among 12 finalist teams.",
+  },
+  {
+    title: "AgriSpark AI",
+    github: "https://agri-advisor-self.vercel.app",
+    image: "/agriAdviser.jpg",
+    tech: ["Next.js", "LLM API", "Weather API", "TailwindCSS"],
+    description:
+      "An AI-powered agricultural advisory chatbot developed for the AgriSpark Hackathon 2.0. It integrates real-time weather APIs with Large Language Models to provide customized recommendations for cassava care and pest management.",
   },
 ]
 
 export default function Projects() {
+  const [showAll, setShowAll] = useState(false)
   const [spiritSlide, setSpiritSlide] = useState(0)
   const spiritLen = useMemo(() => SPIRIT_SLAYER_GALLERY.length, [])
 
@@ -67,6 +84,9 @@ export default function Projects() {
 
   const [immuneSlide, setImmuneSlide] = useState(0)
   const immuneLen = useMemo(() => IMMUNE_KNIGHT_GALLERY.length, [])
+
+  const [fromchangSlide, setFromchangSlide] = useState(0)
+  const fromchangLen = useMemo(() => FROMCHANG_GALLERY.length, [])
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -89,6 +109,15 @@ export default function Projects() {
     return () => clearInterval(t)
   }, [immuneLen])
 
+  useEffect(() => {
+    const t = setInterval(() => {
+      setFromchangSlide((i) => (i + 1) % fromchangLen)
+    }, 2500)
+    return () => clearInterval(t)
+  }, [fromchangLen])
+
+  const visibleProjects = showAll ? projects : projects.slice(0, 4)
+
   return (
     <section id="projects" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
@@ -103,13 +132,13 @@ export default function Projects() {
       </FadeInWhenVisible>
 
       <div className="mt-12 grid gap-8 md:grid-cols-2">
-        {projects.map((project, idx) => (
+        {visibleProjects.map((project, idx) => (
           <FadeInWhenVisible key={project.title} delay={idx * 0.06}>
             <div className="group overflow-hidden rounded-3xl border border-slate-200/70 bg-white/60 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-500/40 dark:border-white/10 dark:bg-white/5">
               <div
                 className={[
                   "relative overflow-hidden bg-slate-50 dark:bg-white/5",
-                  idx === 2 ? "aspect-[4/5]" : idx <= 1 ? "aspect-[16/10]" : "aspect-[16/9]",
+                  idx === 2 ? "aspect-[4/5]" : "aspect-[16/10]",
                 ].join(" ")}
               >
                 <Image
@@ -120,16 +149,16 @@ export default function Projects() {
                         ? project.gallery[stationSlide]
                         : idx === 2
                           ? project.gallery[immuneSlide]
-                          : project.image
+                          : idx === 3
+                            ? project.gallery[fromchangSlide]
+                            : project.image
                   }
                   alt={project.title}
                   fill
                   className={
-                    idx <= 1
+                    idx !== 2
                       ? "object-cover p-0"
-                      : idx === 2
-                        ? "object-contain p-6"
-                        : "object-contain p-10"
+                      : "object-contain p-6"
                   }
                 />
 
@@ -163,7 +192,13 @@ export default function Projects() {
                   rel="noreferrer"
                   className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:border-sky-500/60 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
                 >
-                  <span>View on GitHub</span>
+                  <span>
+                    {project.github.includes("itch.io")
+                      ? "Play on itch.io"
+                      : project.github.includes("vercel.app")
+                        ? "Launch App"
+                        : "View on GitHub"}
+                  </span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -183,6 +218,29 @@ export default function Projects() {
           </FadeInWhenVisible>
         ))}
       </div>
+
+      {projects.length > 4 && (
+        <div className="mt-12 flex justify-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-6 py-3 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/20"
+          >
+            <span>{showAll ? "Show Less" : "View More Projects"}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`h-4 w-4 transition-transform duration-300 ${showAll ? "rotate-180" : ""}`}
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
     </section>
   )
 }
