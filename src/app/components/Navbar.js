@@ -15,7 +15,8 @@ const links = [
 const THEME_STORAGE_KEY = "portfolio_theme"
 
 export default function Navbar() {
-  const [active, setActive] = useState("home")
+  const [active, setActive] = useState("home");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     // Apply theme class to <html> to let Tailwind `dark:` variants work.
@@ -24,12 +25,6 @@ export default function Navbar() {
     // Default to dark if no preference has been saved yet
     if (saved === "light") document.documentElement.classList.remove("dark")
     else document.documentElement.classList.add("dark")
-    console.warn("[THEME-DBG][H1] mount", {
-      saved,
-      htmlHasDarkClass: document.documentElement.classList.contains("dark"),
-      prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
-      bodyColor: getComputedStyle(document.body).color,
-    })
 
     const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean)
     if (sections.length === 0) return
@@ -65,57 +60,54 @@ export default function Navbar() {
   }, [])
 
   const toggleTheme = () => {
-    const beforeHasDark = document.documentElement.classList.contains("dark")
-    const beforeStored = window.localStorage.getItem(THEME_STORAGE_KEY)
     const nextIsDark = !document.documentElement.classList.contains("dark")
     if (nextIsDark) document.documentElement.classList.add("dark")
     else document.documentElement.classList.remove("dark")
     window.localStorage.setItem(THEME_STORAGE_KEY, nextIsDark ? "dark" : "light")
-    console.warn("[THEME-DBG][H2] toggle immediate", {
-      beforeHasDark,
-      afterHasDark: document.documentElement.classList.contains("dark"),
-      nextIsDark,
-      beforeStored,
-      afterStored: window.localStorage.getItem(THEME_STORAGE_KEY),
-      bodyColor: getComputedStyle(document.body).color,
-    })
-
-    requestAnimationFrame(() => {
-      const main = document.querySelector("main")
-      const bodyColor = getComputedStyle(document.body).color
-      const mainColor = main ? getComputedStyle(main).color : null
-      console.warn("[THEME-DBG][H3] toggle raf", {
-        htmlHasDarkClass: document.documentElement.classList.contains("dark"),
-        bodyColor,
-        mainColor,
-      })
-    })
   }
 
   return (
     <nav className="fixed left-1/2 top-4 z-50 w-[92%] max-w-6xl -translate-x-1/2">
       <div className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white/70 px-6 py-3 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-slate-950/60">
-        <div className="flex gap-7">
+        {/* Desktop Links */}
+        <div className="hidden md:flex gap-7">
           {links.map(({ id, label }) => {
-            const isActive = active === id
+            const isActive = active === id;
             return (
               <a
                 key={id}
                 href={`#${id}`}
-                className={`relative px-1 py-1 text-sm transition ${isActive
-                    ? "font-semibold text-sky-600 dark:text-sky-300"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-300/70 dark:hover:text-slate-50"
-                  }`}
+                className={`relative px-1 py-1 text-sm transition whitespace-nowrap ${isActive
+                  ? "font-semibold text-sky-600 dark:text-sky-300"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-300/70 dark:hover:text-slate-50"}`}
               >
                 {label}
                 {isActive && (
                   <span className="absolute left-1 right-1 -bottom-2 h-0.5 rounded-full bg-sky-500 dark:bg-sky-400" />
                 )}
               </a>
-            )
+            );
           })}
         </div>
-
+        {/* Mobile Hamburger */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
+        >
+          {/* Icon changes based on menuOpen */}
+          {menuOpen ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-slate-700">
+              <path d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-slate-700">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          )}
+        </button>
+        {/* Theme toggle stays */}
         <button
           type="button"
           onClick={toggleTheme}
@@ -123,15 +115,7 @@ export default function Navbar() {
           className="ml-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
         >
           <span className="sr-only">Toggle</span>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5 text-slate-700 dark:hidden"
-          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-slate-700 dark:hidden">
             <circle cx="12" cy="12" r="4" />
             <path d="M12 2v2" />
             <path d="M12 20v2" />
@@ -142,19 +126,33 @@ export default function Navbar() {
             <path d="M4.93 19.07l1.41-1.41" />
             <path d="M17.66 6.34l1.41-1.41" />
           </svg>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="hidden h-5 w-5 text-sky-300 dark:inline-block"
-          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="hidden h-5 w-5 text-sky-300 dark:inline-block">
             <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
           </svg>
         </button>
       </div>
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="mt-2 rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-slate-950/60 md:hidden">
+          <div className="grid gap-2">
+            {links.map(({ id, label }) => {
+              const isActive = active === id;
+              return (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block rounded-xl px-4 py-2.5 text-sm font-medium transition ${isActive
+                     ? "bg-sky-500/10 text-sky-600 dark:bg-sky-400/10 dark:text-sky-300"
+                     : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300/70 dark:hover:bg-white/5 dark:hover:text-slate-50"}`}
+                >
+                  {label}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </nav>
-  )
+  );
 }
