@@ -26,6 +26,13 @@ const achievements = [
     image: "/TMH_cer.jpg",
     category: "Game",
   },
+  {
+    title: "IT clash Multimedia 2026",
+    issuer: "Organization Name",
+    date: "2026",
+    image: "/IT Clash 2026 Multimedia.jpg",
+    category: "Game",
+  },
   // Programming
   {
     title: "C++ Programming Model",
@@ -184,8 +191,8 @@ export default function Achievements() {
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
                     className={`rounded-full px-5 py-2 text-xs font-semibold transition-all ${activeCategory === cat
-                        ? "bg-sky-500 text-white shadow-lg shadow-sky-500/25"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+                      ? "bg-sky-500 text-white shadow-lg shadow-sky-500/25"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
                       }`}
                   >
                     {cat}
