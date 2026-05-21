@@ -100,3 +100,13 @@ html {
     animation: none;
   }
 }
+
+.skill-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--hover-color-border) !important;
+  box-shadow: 0 10px 25px -5px var(--hover-color-glow), 0 8px 10px -6px var(--hover-color-glow);
+}

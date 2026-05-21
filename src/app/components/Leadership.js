@@ -9,21 +9,21 @@ export default function Leadership() {
     {
       image: "/FromChangs.jpg",
       title: "IT Clash 2026",
-      subtitle: "King mongkut's University of Technology Ladkrabang",
+      subtitle: "King Mongkut's University of Technology Ladkrabang",
       description:
         "Gained hands-on experience with the Ragdoll physics system, team collaboration, and game debugging while developing 'FromChang', securing 3rd place among 12 finalist teams.",
     },
     {
       image: "/comcamp22.JPG",
       title: "Comcamp 37",
-      subtitle: "King Mongkut's University of Technology Thonbur",
+      subtitle: "King Mongkut's University of Technology Thonburi",
       description:
         "Explored the intersection of C, AI, and Microcontrollers to build a rapid-response project focused on natural disaster themes. Developed a working prototype within a 6-hour time limit during Comcamp 37 at KMUTT 5D4N.",
     },
     {
       image: "/itcamp22.jpg",
       title: "IT camp 22",
-      subtitle: "King mongkut's University of Technology Ladkrabang",
+      subtitle: "King Mongkut's University of Technology Ladkrabang",
       description:
         "Completed an intensive 4D3N Infrastructure program mastering both theory and practice in networking, including IP & Device management, Routing, and Network Configuration via Packet Tracer. Honored to be selected as one of the top 2 finalist teams in the Infrastructure track presentation.",
     },

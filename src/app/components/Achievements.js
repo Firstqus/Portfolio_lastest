@@ -137,6 +137,7 @@ const categories = ["All", ...new Set(achievements.map((a) => a.category))]
 export default function Achievements() {
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState("All")
+  const [selectedIdx, setSelectedIdx] = useState(null)
 
   const filtered = useMemo(() => {
     return achievements.filter((a) => {
@@ -153,6 +154,13 @@ export default function Achievements() {
   const midPoint = Math.ceil(filtered.length / 2)
   const firstRow = filtered.slice(0, midPoint)
   const secondRow = filtered.slice(midPoint)
+
+  const handleSelect = (item) => {
+    const idx = filtered.findIndex((x) => x.title === item.title)
+    if (idx !== -1) {
+      setSelectedIdx(idx)
+    }
+  }
 
   return (
     <section id="achievements" className="relative overflow-hidden py-24">
@@ -212,7 +220,7 @@ export default function Achievements() {
             {filtered.length > 0 ? (
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filtered.map((item, idx) => (
-                  <AchievementCard key={idx} item={item} />
+                  <AchievementCard key={idx} item={item} onSelect={() => handleSelect(item)} />
                 ))}
               </div>
             ) : (
@@ -224,17 +232,27 @@ export default function Achievements() {
         ) : (
           /* Two-Row Infinite Marquee View by default */
           <div className="flex flex-col gap-8 py-10">
-            <MarqueeRow items={firstRow} direction="left" speed={50} />
-            <MarqueeRow items={secondRow} direction="right" speed={55} />
+            <MarqueeRow items={firstRow} direction="left" speed={50} onSelect={handleSelect} />
+            <MarqueeRow items={secondRow} direction="right" speed={55} onSelect={handleSelect} />
           </div>
         )}
       </div>
+
+      {/* Certificate Modal Lightbox */}
+      {selectedIdx !== null && filtered[selectedIdx] && (
+        <CertificateModal
+          item={filtered[selectedIdx]}
+          onClose={() => setSelectedIdx(null)}
+          onPrev={() => setSelectedIdx((selectedIdx - 1 + filtered.length) % filtered.length)}
+          onNext={() => setSelectedIdx((selectedIdx + 1) % filtered.length)}
+        />
+      )}
     </section>
   )
 }
 
 
-function MarqueeRow({ items, direction = "left", speed = 50 }) {
+function MarqueeRow({ items, direction = "left", speed = 50, onSelect }) {
   // Duplicate items for infinite effect
   const doubledItems = [...items, ...items, ...items]
 
@@ -254,7 +272,7 @@ function MarqueeRow({ items, direction = "left", speed = 50 }) {
       >
         {doubledItems.map((item, idx) => (
           <div key={idx} className="w-[280px] flex-shrink-0">
-            <AchievementCard item={item} />
+            <AchievementCard item={item} onSelect={() => onSelect(item)} />
           </div>
         ))}
       </motion.div>
@@ -262,9 +280,12 @@ function MarqueeRow({ items, direction = "left", speed = 50 }) {
   )
 }
 
-function AchievementCard({ item }) {
+function AchievementCard({ item, onSelect }) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-sky-500/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5">
+    <div
+      onClick={onSelect}
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-sky-500/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5"
+    >
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={item.image}
@@ -293,6 +314,80 @@ function AchievementCard({ item }) {
         <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">
           {item.issuer}
         </p>
+      </div>
+    </div>
+  )
+}
+
+function CertificateModal({ item, onClose, onPrev, onNext }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose()
+      if (e.key === "ArrowLeft") onPrev()
+      if (e.key === "ArrowRight") onNext()
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [onClose, onPrev, onNext])
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm">
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-4 rounded-3xl border border-slate-200/20 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/90 md:p-8">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 active:scale-95"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+
+        {/* Content Area with Arrows */}
+        <div className="relative flex w-full items-center justify-center">
+          {/* Prev Arrow */}
+          <button
+            onClick={onPrev}
+            className="absolute left-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white shadow transition hover:bg-white/25 active:scale-95 sm:-left-4 md:-left-6"
+            aria-label="Previous certificate"
+          >
+            ←
+          </button>
+
+          {/* Certificate Image Container */}
+          <div className="relative aspect-[4/3] w-full max-w-[580px] overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              priority
+              className="object-contain"
+            />
+          </div>
+
+          {/* Next Arrow */}
+          <button
+            onClick={onNext}
+            className="absolute right-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white shadow transition hover:bg-white/25 active:scale-95 sm:-right-4 md:-right-6"
+            aria-label="Next certificate"
+          >
+            →
+          </button>
+        </div>
+
+        {/* Info */}
+        <div className="text-center text-white mt-2 max-w-xl">
+          <h3 className="text-base font-bold sm:text-lg">{item.title}</h3>
+          <p className="text-xs text-slate-400 mt-1 sm:text-sm">{item.issuer} • {item.date}</p>
+          <span className="mt-2 inline-block rounded-full bg-sky-500/20 px-3 py-1 text-[10px] font-semibold text-sky-400">
+            {item.category}
+          </span>
+        </div>
       </div>
     </div>
   )

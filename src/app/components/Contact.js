@@ -4,15 +4,27 @@ import { useState } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 
 export default function Contact() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState({ type: "", text: "" })
   const [isSending, setIsSending] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const trimmed = message.trim()
-    if (!trimmed) {
-      setStatus({ type: "error", text: "Please type a message first." })
+    const trimmedName = name.trim()
+    const trimmedEmail = email.trim()
+    const trimmedMsg = message.trim()
+
+    if (!trimmedName || !trimmedEmail || !trimmedMsg) {
+      setStatus({ type: "error", text: "Please fill in all fields." })
+      return
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      setStatus({ type: "error", text: "Please enter a valid email address." })
       return
     }
 
@@ -23,12 +35,18 @@ export default function Contact() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed }),
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          message: trimmedMsg,
+        }),
       })
 
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || "Failed to send message.")
 
+      setName("")
+      setEmail("")
       setMessage("")
       setStatus({ type: "success", text: "Message sent successfully." })
     } catch (err) {
@@ -61,35 +79,73 @@ export default function Contact() {
       <div className="mx-auto mt-10 max-w-3xl">
         <FadeInWhenVisible delay={0.08}>
           <form
-            className="rounded-3xl border border-slate-200/70 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
+            className="rounded-3xl border border-slate-200/70 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 md:p-8"
             onSubmit={handleSubmit}
           >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex-1">
-                <label className="sr-only" htmlFor="message">
+            <div className="flex flex-col gap-6">
+              {/* Name & Email Fields */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400" htmlFor="name">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-sky-500/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-400" htmlFor="email">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-sky-500/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Message Field */}
+              <div>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400" htmlFor="message">
                   Message
                 </label>
                 <textarea
                   id="message"
-                  rows={3}
+                  rows={4}
                   placeholder="Type your message here..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full resize-none rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-sky-500/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
+                  className="mt-1.5 w-full resize-none rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-sky-500/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
+                  required
                 />
-                {status.text && (
-                  <p
-                    className={`mt-3 text-sm ${
-                      status.type === "success"
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-rose-600 dark:text-rose-400"
-                    }`}
-                  >
-                    {status.text}
-                  </p>
-                )}
+              </div>
 
-                <div className="mt-4 flex items-center gap-4 text-slate-600 dark:text-slate-300">
+              {status.text && (
+                <p
+                  className={`text-sm ${
+                    status.type === "success"
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-rose-600 dark:text-rose-400"
+                  }`}
+                >
+                  {status.text}
+                </p>
+              )}
+
+              {/* Bottom Row */}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2">
+                <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300">
                   <a
                     href="https://github.com/Firstqus"
                     target="_blank"
@@ -116,28 +172,28 @@ export default function Contact() {
                     <i className="devicon-google-plain colored text-base" />
                   </a>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={isSending}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-white"
-              >
-                {isSending ? "Sending..." : "Send Message"}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4"
+                <button
+                  type="submit"
+                  disabled={isSending}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-white"
                 >
-                  <path d="M22 2L11 13" />
-                  <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-                </svg>
-              </button>
+                  {isSending ? "Sending..." : "Send Message"}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4"
+                  >
+                    <path d="M22 2L11 13" />
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </form>
         </FadeInWhenVisible>

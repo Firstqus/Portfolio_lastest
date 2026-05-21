@@ -74,48 +74,97 @@ const projects = [
   },
 ]
 
+function ProjectCard({ project, idx }) {
+  const [slideIndex, setSlideIndex] = useState(0)
+  const hasGallery = project.gallery && project.gallery.length > 0
+
+  useEffect(() => {
+    if (!hasGallery) return
+    const t = setInterval(() => {
+      setSlideIndex((i) => (i + 1) % project.gallery.length)
+    }, 2500)
+    return () => clearInterval(t)
+  }, [hasGallery, project.gallery])
+
+  const imageSrc = hasGallery ? project.gallery[slideIndex] : project.image
+
+  return (
+    <div className="group overflow-hidden rounded-3xl border border-slate-200/70 bg-white/60 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-500/40 dark:border-white/10 dark:bg-white/5">
+      <div
+        className={[
+          "relative overflow-hidden bg-slate-50 dark:bg-white/5",
+          idx === 2 ? "aspect-[4/5]" : "aspect-[16/10]",
+        ].join(" ")}
+      >
+        <Image
+          src={imageSrc}
+          alt={project.title}
+          fill
+          className={
+            idx !== 2
+              ? "object-cover p-0"
+              : "object-contain p-6"
+          }
+        />
+
+        <div className="absolute inset-0 bg-sky-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <div className="flex flex-wrap justify-center gap-2 px-6">
+            {project.tech.map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-sky-500/35 bg-sky-500/15 px-3 py-1 text-xs font-medium text-indigo-100 backdrop-blur dark:text-indigo-50"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+          {project.title}
+        </h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {project.description}
+        </p>
+
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:border-sky-500/60 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
+        >
+          <span>
+            {project.github.includes("itch.io")
+              ? "Play on itch.io"
+              : project.github.includes("vercel.app")
+                ? "Launch App"
+                : "View on GitHub"}
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+          >
+            <path d="M9 18l-6 3 3-6 13-13a2 2 0 0 1 3 3L9 18z" />
+            <path d="M15 6l3 3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  )
+}
+
 export default function Projects() {
   const [showAll, setShowAll] = useState(false)
-  const [spiritSlide, setSpiritSlide] = useState(0)
-  const spiritLen = useMemo(() => SPIRIT_SLAYER_GALLERY.length, [])
-
-  const [stationSlide, setStationSlide] = useState(0)
-  const stationLen = useMemo(() => STATION_4_GALLERY.length, [])
-
-  const [immuneSlide, setImmuneSlide] = useState(0)
-  const immuneLen = useMemo(() => IMMUNE_KNIGHT_GALLERY.length, [])
-
-  const [fromchangSlide, setFromchangSlide] = useState(0)
-  const fromchangLen = useMemo(() => FROMCHANG_GALLERY.length, [])
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setSpiritSlide((i) => (i + 1) % spiritLen)
-    }, 2500)
-    return () => clearInterval(t)
-  }, [spiritLen])
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setStationSlide((i) => (i + 1) % stationLen)
-    }, 2500)
-    return () => clearInterval(t)
-  }, [stationLen])
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setImmuneSlide((i) => (i + 1) % immuneLen)
-    }, 2500)
-    return () => clearInterval(t)
-  }, [immuneLen])
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setFromchangSlide((i) => (i + 1) % fromchangLen)
-    }, 2500)
-    return () => clearInterval(t)
-  }, [fromchangLen])
-
   const visibleProjects = showAll ? projects : projects.slice(0, 4)
 
   return (
@@ -134,87 +183,7 @@ export default function Projects() {
       <div className="mt-12 grid gap-8 md:grid-cols-2">
         {visibleProjects.map((project, idx) => (
           <FadeInWhenVisible key={project.title} delay={idx * 0.06}>
-            <div className="group overflow-hidden rounded-3xl border border-slate-200/70 bg-white/60 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-500/40 dark:border-white/10 dark:bg-white/5">
-              <div
-                className={[
-                  "relative overflow-hidden bg-slate-50 dark:bg-white/5",
-                  idx === 2 ? "aspect-[4/5]" : "aspect-[16/10]",
-                ].join(" ")}
-              >
-                <Image
-                  src={
-                    idx === 0
-                      ? project.gallery[spiritSlide]
-                      : idx === 1
-                        ? project.gallery[stationSlide]
-                        : idx === 2
-                          ? project.gallery[immuneSlide]
-                          : idx === 3
-                            ? project.gallery[fromchangSlide]
-                            : project.image
-                  }
-                  alt={project.title}
-                  fill
-                  className={
-                    idx !== 2
-                      ? "object-cover p-0"
-                      : "object-contain p-6"
-                  }
-                />
-
-                <div className="absolute inset-0 bg-sky-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <div className="flex flex-wrap justify-center gap-2 px-6">
-                    {project.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-sky-500/35 bg-sky-500/15 px-3 py-1 text-xs font-medium text-indigo-100 backdrop-blur dark:text-indigo-50"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50">
-                  {project.title}
-                </h3>
-                <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  {project.description}
-                </p>
-
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:border-sky-500/60 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
-                >
-                  <span>
-                    {project.github.includes("itch.io")
-                      ? "Play on itch.io"
-                      : project.github.includes("vercel.app")
-                        ? "Launch App"
-                        : "View on GitHub"}
-                  </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4"
-                  >
-                    <path d="M9 18l-6 3 3-6 13-13a2 2 0 0 1 3 3L9 18z" />
-                    <path d="M15 6l3 3" />
-                  </svg>
-                </a>
-              </div>
-            </div>
+            <ProjectCard project={project} idx={idx} />
           </FadeInWhenVisible>
         ))}
       </div>

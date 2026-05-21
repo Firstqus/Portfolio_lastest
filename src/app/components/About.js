@@ -40,11 +40,6 @@ export default function About() {
             </p>
           </FadeInWhenVisible>
 
-          <FadeInWhenVisible delay={0.12} className="mt-4">
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-             
-            </p>
-          </FadeInWhenVisible>
         </div>
 
         <div className="lg:col-span-6">

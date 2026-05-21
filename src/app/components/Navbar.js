@@ -30,28 +30,6 @@ export default function Navbar() {
       prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
       bodyColor: getComputedStyle(document.body).color,
     })
-    // #region agent log
-    fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "1f59da",
-      },
-      body: JSON.stringify({
-        sessionId: "1f59da",
-        runId: "theme-debug-1",
-        hypothesisId: "H1",
-        location: "Navbar.js:mount-useEffect",
-        message: "Applied theme from localStorage on mount",
-        data: {
-          saved,
-          htmlHasDarkClass: document.documentElement.classList.contains("dark"),
-          prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => { })
-    // #endregion
 
     const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean)
     if (sections.length === 0) return
@@ -101,31 +79,6 @@ export default function Navbar() {
       afterStored: window.localStorage.getItem(THEME_STORAGE_KEY),
       bodyColor: getComputedStyle(document.body).color,
     })
-    // #region agent log
-    fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "1f59da",
-      },
-      body: JSON.stringify({
-        sessionId: "1f59da",
-        runId: "theme-debug-1",
-        hypothesisId: "H2",
-        location: "Navbar.js:toggleTheme",
-        message: "Theme toggled and localStorage updated",
-        data: {
-          beforeHasDark,
-          afterHasDark: document.documentElement.classList.contains("dark"),
-          nextIsDark,
-          beforeStored,
-          afterStored: window.localStorage.getItem(THEME_STORAGE_KEY),
-          prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => { })
-    // #endregion
 
     requestAnimationFrame(() => {
       const main = document.querySelector("main")
@@ -136,28 +89,6 @@ export default function Navbar() {
         bodyColor,
         mainColor,
       })
-      // #region agent log
-      fetch("http://127.0.0.1:7595/ingest/6759185a-1876-4ee1-ae71-ee2ed22ab078", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "1f59da",
-        },
-        body: JSON.stringify({
-          sessionId: "1f59da",
-          runId: "theme-debug-1",
-          hypothesisId: "H3",
-          location: "Navbar.js:toggleTheme:raf",
-          message: "Computed colors after theme toggle",
-          data: {
-            htmlHasDarkClass: document.documentElement.classList.contains("dark"),
-            bodyColor,
-            mainColor,
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => { })
-      // #endregion
     })
   }
 
