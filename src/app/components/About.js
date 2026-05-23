@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import FadeInWhenVisible from "./FadeInWhenVisible"
+import SectionHeading from "./SectionHeading"
 
 const timeline = [
   {
@@ -22,13 +23,14 @@ export default function About() {
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
         <div className="lg:col-span-6">
           <FadeInWhenVisible>
-            <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              About Me
-            </h2>
+            <SectionHeading
+              eyebrow="About Me"
+              title="From curiosity to craft."
+            />
           </FadeInWhenVisible>
 
           <FadeInWhenVisible delay={0.06} className="mt-6">
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="leading-relaxed text-slate-600 dark:text-slate-300">
               Growing up surrounded by technology, I went from playing games to
               wondering how they were made. That curiosity led me to web and
               game development — building websites and creating games with
@@ -39,7 +41,6 @@ export default function About() {
               passion I&apos;m committed to pursuing.
             </p>
           </FadeInWhenVisible>
-
         </div>
 
         <div className="lg:col-span-6">
@@ -48,9 +49,10 @@ export default function About() {
               <div className="relative aspect-[4/3]">
                 <Image
                   src="/mine3.jpg"
-                  alt="About right visual"
+                  alt="Patawee Kimhia at a tech event"
                   fill
                   priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
               </div>
@@ -59,7 +61,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* Move "My Journey" below About Me */}
       <div id="about-timeline" className="mt-16">
         <FadeInWhenVisible>
           <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
@@ -69,7 +70,7 @@ export default function About() {
         </FadeInWhenVisible>
 
         <div className="relative mt-10 pl-6">
-          <div className="absolute left-1 top-0 bottom-0 w-px bg-slate-200 dark:bg-white/10" />
+          <div className="absolute bottom-0 left-1 top-0 w-px bg-slate-200 dark:bg-white/10" />
 
           {timeline.map((t, idx) => (
             <FadeInWhenVisible
@@ -96,4 +97,3 @@ export default function About() {
     </section>
   )
 }
-

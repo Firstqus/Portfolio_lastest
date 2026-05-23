@@ -4,10 +4,15 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { INTRO_STORAGE_KEY } from "../constants/sections"
 
-const MIN_MS = 900
+const MIN_MS = 700
 
 export default function IntroLoader({ children }) {
   const [showLoader, setShowLoader] = useState(null)
+
+  const dismiss = () => {
+    localStorage.setItem(INTRO_STORAGE_KEY, "1")
+    setShowLoader(false)
+  }
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -62,6 +67,13 @@ export default function IntroLoader({ children }) {
               transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
             />
             <p className="text-sm tracking-wide text-zinc-400">Loading portfolio…</p>
+            <button
+              type="button"
+              onClick={dismiss}
+              className="mt-2 rounded-full border border-white/15 px-4 py-2 text-xs font-medium text-zinc-400 transition hover:border-sky-500/40 hover:text-sky-300"
+            >
+              Skip intro
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

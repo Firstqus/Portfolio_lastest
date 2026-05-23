@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
+import SectionHeading from "./SectionHeading"
+import { SOCIAL_LINKS } from "../constants/social"
+import SocialIcon from "./SocialIcon"
 
 export default function Contact() {
   const [name, setName] = useState("")
@@ -21,7 +24,6 @@ export default function Contact() {
       return
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(trimmedEmail)) {
       setStatus({ type: "error", text: "Please enter a valid email address." })
@@ -62,18 +64,12 @@ export default function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
-        <div className="text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            Let&apos;s Stay In Touch
-          </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-            I am currently focused on building side projects that address tangible,
-            real-world challenges. My goal is to apply a rigorous problem-solving
-            mindset across software engineering, AI engineering and data engineering
-            to create impactful solutions. Whether you have a project to connect,
-            or just want to collaborate, I&apos;d love to hear from you.
-          </p>
-        </div>
+        <SectionHeading
+          align="center"
+          eyebrow="Contact"
+          title="Let's Stay In Touch"
+          description="I am currently focused on building side projects that address tangible, real-world challenges. Whether you have a project to connect or just want to collaborate, I'd love to hear from you."
+        />
       </FadeInWhenVisible>
 
       <div className="mx-auto mt-10 max-w-3xl">
@@ -83,7 +79,6 @@ export default function Contact() {
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col gap-6">
-              {/* Name & Email Fields */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="text-xs font-bold text-slate-600 dark:text-slate-400" htmlFor="name">
@@ -115,7 +110,6 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Message Field */}
               <div>
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-400" htmlFor="message">
                   Message
@@ -143,40 +137,26 @@ export default function Contact() {
                 </p>
               )}
 
-              {/* Bottom Row */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2">
+              <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300">
-                  <a
-                    href="https://github.com/Firstqus"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
-                    aria-label="GitHub"
-                  >
-                    <i className="devicon-github-original text-base" />
-                  </a>
-                  <a
-                    href="https://discord.com/users/859669470368890920"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
-                    aria-label="Discord"
-                  >
-                    <i className="devicon-discord-original text-base" />
-                  </a>
-                  <a
-                    href="mailto:patawee.kim@gmail.com"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
-                    aria-label="Email"
-                  >
-                    <i className="devicon-google-plain colored text-base" />
-                  </a>
+                  {SOCIAL_LINKS.map(({ href, label, icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target={href.startsWith("mailto:") ? undefined : "_blank"}
+                      rel={href.startsWith("mailto:") ? undefined : "noreferrer"}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white/60 transition hover:bg-white dark:border-white/10 dark:bg-white/5"
+                      aria-label={label}
+                    >
+                      <SocialIcon icon={icon} className="text-base" />
+                    </a>
+                  ))}
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSending}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-white"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-slate-900 px-6 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.98] disabled:opacity-60 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-white"
                 >
                   {isSending ? "Sending..." : "Send Message"}
                   <svg
@@ -188,6 +168,7 @@ export default function Contact() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     className="h-4 w-4"
+                    aria-hidden
                   >
                     <path d="M22 2L11 13" />
                     <path d="M22 2L15 22L11 13L2 9L22 2Z" />

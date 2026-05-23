@@ -1,4 +1,5 @@
 import FadeInWhenVisible from "./FadeInWhenVisible"
+import SectionHeading from "./SectionHeading"
 
 const skills = [
   {
@@ -18,6 +19,7 @@ const skills = [
       { name: "React", icon: "devicon-react-original colored", color: "#61DAFB" },
       { name: "Next.js", icon: "devicon-nextjs-plain", color: "#64748B" },
       { name: "Tailwind CSS", icon: "devicon-tailwindcss-plain colored", color: "#38BDF8" },
+      { name: "Node.js", icon: "devicon-nodejs-plain colored", color: "#339933" },
     ],
   },
   {
@@ -26,26 +28,24 @@ const skills = [
       { name: "PostgreSQL", icon: "devicon-postgresql-plain colored", color: "#336791" },
       { name: "MySQL", icon: "devicon-mysql-plain colored", color: "#00758F" },
       { name: "MongoDB", icon: "devicon-mongodb-plain colored", color: "#47A248" },
-      { name: "Node.js", icon: "devicon-nodejs-plain colored", color: "#339933" },
     ],
   },
-
   {
-    category: "OS & Tool",
+    category: "OS & Tools",
     items: [
-      { name: "Kalilinux", icon:"devicon-kalilinux-original colored", color: "#557C94" },
-      { name: "Unity", icon:"devicon-unity-plain colored", color: "#808080" },
-      { name: "Git", icon:"devicon-git-plain colored", color: "#F05032" },
-      { name: "VS code", icon:"devicon-vscode-plain colored", color: "#007ACC" },
-      { name: "Vercel", icon:"devicon-vercel-original", color: "#475569" },
-      { 
-        name: "Cisco & Network", 
+      { name: "Kali Linux", icon: "devicon-kalilinux-original colored", color: "#557C94" },
+      { name: "Unity", icon: "devicon-unity-plain colored", color: "#808080" },
+      { name: "Git", icon: "devicon-git-plain colored", color: "#F05032" },
+      { name: "VS Code", icon: "devicon-vscode-plain colored", color: "#007ACC" },
+      { name: "Vercel", icon: "devicon-vercel-original", color: "#475569" },
+      {
+        name: "Cisco & Network",
         color: "#1BA0D7",
         svg: (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-9 h-9">
-            <path d="M12.002 9.066c-1.391 0-2.52 1.129-2.52 2.52 0 1.39 1.129 2.518 2.52 2.518s2.519-1.128 2.519-2.518c0-1.391-1.128-2.52-2.519-2.52m0 6.64c-2.272 0-4.12-1.848-4.12-4.12 0-2.27 1.848-4.119 4.12-4.119 2.271 0 4.119 1.849 4.119 4.119 0 2.272-1.848 4.12-4.119 4.12M3.923 8.35v11.726H2.324V8.35h1.599m17.753 0v11.726H20.08V8.35h1.596M12.002 0v5.864h-1.6V0h1.6m-4.04 2.293v7.41h-1.6V2.293h1.6m8.078 0v7.41h-1.598V2.293h1.598M7.962 4.606v9.124h-1.6V4.606h1.6m8.077 0v9.124h-1.598V4.606h1.598z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-9 w-9">
+            <path d="M12.002 9.066c-1.391 0-2.52 1.129-2.52 2.52 0 1.39 1.129 2.518 2.52 2.518s2.519-1.128 2.519-2.518c0-1.391-1.128-2.52-2.519-2.52m0 6.64c-2.272 0-4.12-1.848-4.12-4.12 0-2.27 1.848-4.119 4.12-4.119 2.271 0 4.119 1.849 4.119 4.119 0 2.272-1.848 4.12-4.119 4.12M3.923 8.35v11.726H2.324V8.35h1.599m17.753 0v11.726H20.08V8.35h1.596M12.002 0v5.864h-1.6V0h1.6m-4.04 2.293v7.41h-1.6V2.293h1.6m8.078 0v7.41h-1.598V2.293h1.598M7.962 4.606v9.124h-1.6V4.606h1.6m8.077 0v9.124h-1.598V4.606h1.598z" />
           </svg>
-        )
+        ),
       },
     ],
   },
@@ -53,19 +53,13 @@ const skills = [
 
 export default function Skills() {
   return (
-    <section
-      id="skills"
-      className="mx-auto max-w-6xl px-8 py-24"
-    >
+    <section id="skills" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
-        <div className="text-center">
-          <p className="text-sm font-semibold tracking-widest text-sky-600 dark:text-sky-300">
-            THE STACK PIPELINE
-          </p>
-          <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            Every solution starts with the right foundation.
-          </h2>
-        </div>
+        <SectionHeading
+          align="center"
+          eyebrow="The Stack Pipeline"
+          title="Every solution starts with the right foundation."
+        />
       </FadeInWhenVisible>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-3">

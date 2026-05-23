@@ -10,13 +10,18 @@ import CursorGlow from "./components/CursorGlow"
 import About from "./components/About"
 import Leadership from "./components/Leadership"
 import Achievements from "./components/Achievements"
+import Footer from "./components/Footer"
+import BackToTop from "./components/BackToTop"
 
 export default function Home() {
   return (
     <IntroLoader>
       <CursorGlow />
       <div className="bg-network" aria-hidden />
-      <main className="relative z-10 min-h-screen text-slate-900 dark:text-slate-50">
+      <main
+        id="main-content"
+        className="relative z-10 min-h-screen text-slate-900 dark:text-slate-50"
+      >
         <Navbar />
 
         <section
@@ -33,8 +38,9 @@ export default function Home() {
         <Projects />
         <Achievements />
         <Contact />
+        <Footer />
       </main>
+      <BackToTop />
     </IntroLoader>
   )
 }
-

@@ -1,94 +1,90 @@
 import { useState, useMemo, useRef, useEffect } from "react"
 import Image from "next/image"
 import FadeInWhenVisible from "./FadeInWhenVisible"
-import { motion } from "framer-motion"
+import SectionHeading from "./SectionHeading"
+import { motion, useReducedMotion } from "framer-motion"
 
 const achievements = [
-  // Game
   {
     title: "Game Development Achievement",
-    issuer: "Organization Name",
+    issuer: "Kanchanapisek Wittayalai Nakhon Pathom School",
     date: "2025",
     image: "/Ref.png",
     category: "Game",
   },
   {
     title: "Game Project Certification",
-    issuer: "Organization Name",
+    issuer: "Kanchanapisek Wittayalai Nakhon Pathom School",
     date: "2026",
     image: "/cer.png",
     category: "Game",
   },
   {
     title: "TMH Game Award",
-    issuer: "Organization Name",
+    issuer: "Thailand Medical Hub (TMH)",
     date: "2025",
     image: "/TMH_cer.jpg",
     category: "Game",
   },
   {
     title: "IT clash Multimedia 2026",
-    issuer: "Organization Name",
+    issuer: "King Mongkut's Institute of Technology Ladkrabang",
     date: "2026",
     image: "/IT Clash 2026 Multimedia.jpg",
     category: "Game",
   },
-  // Programming
   {
     title: "C++ Programming Model",
-    issuer: "Organization Name",
+    issuer: "Kanchanapisek Wittayalai Nakhon Pathom School",
     date: "2025",
     image: "/c++_model.jpg",
     category: "Programming",
   },
   {
     title: "IT Clash Competition",
-    issuer: "Organization Name",
+    issuer: "King Mongkut's Institute of Technology Ladkrabang",
     date: "2025",
     image: "/ITclash.png",
     category: "Programming",
   },
   {
     title: "TobeIT Achievement",
-    issuer: "Organization Name",
+    issuer: "TobeIT",
     date: "2025",
     image: "/tobeIT.jpg",
     category: "Programming",
   },
-  // Web
   {
     title: "Web Development Review",
-    issuer: "Organization Name",
+    issuer: "Kanchanapisek Wittayalai Nakhon Pathom School",
     date: "2025",
     image: "/game-review.jpg",
     category: "Web",
   },
   {
     title: "AgriAdviser Project",
-    issuer: "Organization Name",
+    issuer: "AgriSpark Hackathon 2.0",
     date: "2026",
     image: "/agriAdviser.jpg",
     category: "Web",
   },
-  // IOT
   {
     title: "IOT Research Project",
-    issuer: "Organization Name",
+    issuer: "Kanchanapisek Wittayalai Nakhon Pathom School",
     date: "2025",
     image: "/reseach_IOT.jpg",
     category: "IOT",
   },
-  // AI
   {
     title: "AIAT AI Specialist",
-    issuer: "Organization Name",
+    issuer: "AIAT (Artificial Intelligence Association of Thailand)",
     date: "2025",
     image: "/AIAT.jpg",
     category: "AI",
   },
   {
     title: "Innovator Award",
-    issuer: "Organization Name",
+    issuer: "National Innovation Agency",
     date: "2025",
     image: "/INNOVATOR_1.jpg",
     category: "AI",
@@ -102,30 +98,28 @@ const achievements = [
   },
   {
     title: "Agispark AI Hackathon",
-    issuer: "Organization Name",
+    issuer: "AgriSpark Hackathon 2.0",
     date: "2026",
     image: "/Agispark.jpg",
-    category: "Web,AI",
+    category: "AI",
   },
-  // Camp
   {
     title: "Comcamp Certificate",
-    issuer: "KMUTT",
+    issuer: "King Mongkut's University of Technology Thonburi",
     date: "2025",
     image: "/comcamp_cer.jpg",
     category: "Camp",
   },
   {
     title: "IT Camp 22 Certificate",
-    issuer: "KMITL",
+    issuer: "King Mongkut's Institute of Technology Ladkrabang",
     date: "2025",
     image: "/ITcamp22_cer.jpg",
     category: "Camp",
   },
-  // Other
   {
     title: "MUIC Excel Certification",
-    issuer: "MUIC",
+    issuer: "Mahidol University International College",
     date: "2024",
     image: "/MUIC Excel.png",
     category: "Other",
@@ -167,12 +161,16 @@ export default function Achievements() {
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-12 flex flex-col items-center text-center">
           <FadeInWhenVisible>
-            <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              My <span className="text-sky-500">Achievements</span>
-            </h2>
-            <p className="mt-4 max-w-2xl text-slate-600 dark:text-slate-400">
-              A collection of certificates and awards reflecting my continuous learning and growth.
-            </p>
+            <SectionHeading
+              align="center"
+              eyebrow="Achievements"
+              title={
+                <>
+                  My <span className="text-sky-500">Achievements</span>
+                </>
+              }
+              description="A collection of certificates and awards reflecting my continuous learning and growth."
+            />
           </FadeInWhenVisible>
 
           {/* Search & Filter UI */}
@@ -253,16 +251,26 @@ export default function Achievements() {
 
 
 function MarqueeRow({ items, direction = "left", speed = 50, onSelect }) {
-  // Duplicate items for infinite effect
+  const [paused, setPaused] = useState(false)
+  const reduceMotion = useReducedMotion()
   const doubledItems = [...items, ...items, ...items]
+  const shouldAnimate = reduceMotion !== true && !paused
 
   return (
-    <div className="flex overflow-hidden">
+    <div
+      className="flex overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <motion.div
-        className="flex gap-6 pr-6"
-        animate={{
-          x: direction === "left" ? ["0%", "-33.33%"] : ["-33.33%", "0%"],
-        }}
+        className="marquee-track flex gap-6 pr-6"
+        animate={
+          shouldAnimate
+            ? {
+                x: direction === "left" ? ["0%", "-33.33%"] : ["-33.33%", "0%"],
+              }
+            : false
+        }
         transition={{
           duration: speed,
           repeat: Infinity,
@@ -291,6 +299,7 @@ function AchievementCard({ item, onSelect }) {
           src={item.image}
           alt={item.title}
           fill
+          sizes="280px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">

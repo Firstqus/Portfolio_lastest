@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import FadeInWhenVisible from "./FadeInWhenVisible"
+import SectionHeading from "./SectionHeading"
 import { useState } from "react"
 
 export default function Leadership() {
@@ -11,7 +12,7 @@ export default function Leadership() {
       title: "IT Clash 2026",
       subtitle: "King Mongkut's University of Technology Ladkrabang",
       description:
-        "Gained hands-on experience with the Ragdoll physics system, team collaboration, and game debugging while developing 'FromChang', securing 3rd place among 12 finalist teams.",
+        "Led our team through the IT Clash 2026 game track — coordinating roles, debugging under time pressure, and presenting our multiplayer prototype to judges. The experience sharpened my communication and technical leadership beyond solo coding.",
     },
     {
       image: "/comcamp22.JPG",
@@ -37,27 +38,24 @@ export default function Leadership() {
     {
       image: "/workshop_CU_TMH.JPG",
       title: "TMH 24 Final Team",
-      subtitle: "at the Faculty of Engineering, Chulalongkorn University 2026",
+      subtitle: "Faculty of Engineering, Chulalongkorn University • 2026",
       description:
-        "Learn the basics of Blender and Unity, and recommend the Mangos website.",
+        "Represented our team at the TMH finals — presenting Immune Knight, refining the pitch with mentors, and learning production workflows across Blender and Unity.",
     },
   ]
 
-  // Simple in-component slider controlled by the existing arrows.
-  // (No external carousel library needed for just 2 slides.)
   const [index, setIndex] = useState(0)
   const goPrev = () => setIndex((i) => (i - 1 + slides.length) % slides.length)
   const goNext = () => setIndex((i) => (i + 1) % slides.length)
 
   return (
-    <section
-      className="mx-auto max-w-6xl px-8 py-24"
-    >
+    <section id="leadership" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
-          Leadership &amp; Community Involvement
-        </h2>
-        <div className="mt-2 h-1 w-20 rounded bg-sky-500/30" />
+        <SectionHeading
+          eyebrow="Leadership"
+          title="Leadership & Community Involvement"
+          description="Competitions, camps, and presentations where I collaborated, led, and learned alongside peers."
+        />
       </FadeInWhenVisible>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:items-center">
@@ -69,6 +67,7 @@ export default function Leadership() {
                 alt={slides[index].title}
                 fill
                 priority={index === 0}
+                sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"
               />
             </div>
@@ -86,7 +85,7 @@ export default function Leadership() {
               </p>
             </div>
 
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="leading-relaxed text-slate-600 dark:text-slate-300">
               {slides[index].description}
             </p>
 
@@ -94,7 +93,7 @@ export default function Leadership() {
               <button
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/70 text-slate-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
-                aria-label="Previous"
+                aria-label="Previous slide"
                 onClick={goPrev}
               >
                 ←
@@ -102,15 +101,18 @@ export default function Leadership() {
               <button
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/70 text-slate-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
-                aria-label="Next"
+                aria-label="Next slide"
                 onClick={goNext}
               >
                 →
               </button>
               <div className="ml-2 flex items-center gap-2">
                 {slides.map((_, i) => (
-                  <span
+                  <button
                     key={i}
+                    type="button"
+                    aria-label={`Go to slide ${i + 1}`}
+                    onClick={() => setIndex(i)}
                     className={
                       i === index
                         ? "h-2 w-7 rounded-full bg-sky-500/70 dark:bg-sky-400/70"
@@ -126,4 +128,3 @@ export default function Leadership() {
     </section>
   )
 }
-
