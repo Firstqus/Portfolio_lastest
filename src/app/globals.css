@@ -1,140 +1,504 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=Fragment+Mono:ital@0;1&family=Noto+Serif+Balinese&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-instrument-sans), "Instrument Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-sans), "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+  --font-mono: var(--font-fragment-mono), "Fragment Mono", ui-monospace, monospace;
+  --font-balinese: var(--font-noto-serif-balinese), "Noto Serif Balinese", Georgia, serif;
 }
 
- :root {
-  /* Light theme: keep readable but less "white" and more deep blue. */
-  --bg: #dbeafe;
-  --dot: rgba(56, 189, 248, 0.13);
-  --line: rgba(56, 189, 248, 0.09);
-  --cursor-glow-rgb: 56, 189, 248; /* sky/cyan */
+/* ═══════════════════════════════════════
+   NIVORA DESIGN TOKENS
+   Extracted from nivora.framer.website
+═══════════════════════════════════════ */
+:root {
+  /* Background — Nivora sits on pure black, surfaces are white at low alpha */
+  --color-bg:        #000000;
+  --color-surface:   rgba(255, 255, 255, 0.02);
+  --color-surface-2: rgba(255, 255, 255, 0.04);
+  --color-surface-solid: #0a0a0a;
 
-  --mesh-1: rgba(56, 189, 248, 0.28);
-  --mesh-2: rgba(16, 185, 129, 0.2);
-  --mesh-3: rgba(59, 130, 246, 0.16);
+  /* Brand — lime family straight from the template */
+  --color-primary:       #A2E435;
+  --color-primary-light: #C1F12A;
+  --color-accent:        #83CA16;
+  --color-olive-deep:    #131A00;
+
+  /* Text — Nivora never uses grey hexes, only white at alpha */
+  --color-text:       #FFFFFF;
+  --color-text-muted: rgba(255, 255, 255, 0.75);
+  --color-text-dim:   rgba(255, 255, 255, 0.5);
+  --color-text-faint: rgba(255, 255, 255, 0.35);
+
+  /* Border */
+  --color-border:        rgba(162, 228, 53, 0.35);
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-border-faint:  rgba(255, 255, 255, 0.06);
+
+  /* Gradients */
+  --gradient-hero: linear-gradient(135deg, #FFFFFF 40%, #A2E435 100%);
+  --gradient-text: linear-gradient(135deg, #FFFFFF 60%, #A2E435 100%);
+
+  /* Glow — reserved for the single primary CTA, not a global hover effect */
+  --shadow-glow-primary: 0 0 40px rgba(162, 228, 53, 0.28);
+
+  /* Cursor glow */
+  --cursor-glow-rgb: 162, 228, 53;
+
+  /* Radii — Nivora only ships two: 40px shells and 999px pills */
+  --radius-card:    40px;
+  --radius-card-sm: 24px;
+  --radius-pill:    999px;
+
+  /* Background grid */
+  --dot:  rgba(255, 255, 255, 0.03);
+  --line: rgba(255, 255, 255, 0.015);
 }
 
-html.dark {
-  --bg: #020617;
-  --dot: rgba(56, 189, 248, 0.22);
-  --line: rgba(56, 189, 248, 0.16);
-  --cursor-glow-rgb: 56, 189, 248;
-
-  --mesh-1: rgba(56, 189, 248, 0.24);
-  --mesh-2: rgba(14, 116, 144, 0.25);
-  --mesh-3: rgba(59, 130, 246, 0.15);
+/* ═══════════════════════════════════════
+   BASE
+═══════════════════════════════════════ */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--bg);
-  color: #0f172a; /* slate-900 */
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-sans);
-}
-
-html.dark body {
-  color: #f8fafc; /* slate-50 */
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  /* full-bleed marquees break out with 100vw; keep them from adding a scrollbar */
+  overflow-x: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-
-  .marquee-track {
-    animation-play-state: paused !important;
-  }
+  .marquee-track { animation-play-state: paused !important; }
 }
 
+/* ═══════════════════════════════════════
+   ACCESSIBILITY
+═══════════════════════════════════════ */
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 1rem;
   z-index: 300;
-  border-radius: 9999px;
-  background: #0ea5e9;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: white;
+  color: black;
   text-decoration: none;
 }
+.skip-link:focus { left: 1rem; }
 
-.skip-link:focus {
-  left: 1rem;
-}
-
-.hero-mesh-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  background: transparent;
-}
-
+/* ═══════════════════════════════════════
+   BACKGROUND — NEUTRAL DOT GRID
+═══════════════════════════════════════ */
 .bg-network {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px),
+  background-image:
+    radial-gradient(circle, var(--dot) 1px, transparent 1px),
     linear-gradient(to right, var(--line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--line) 1px, transparent 1px),
-    linear-gradient(135deg, var(--line) 1px, transparent 1px);
-  background-size: 22px 22px, 150px 150px, 150px 150px, 220px 220px;
-  background-position: 0 0, 0 0, 0 0, 0 0;
-  opacity: 0.95;
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 32px 32px, 160px 160px, 160px 160px;
+  opacity: 0.9;
 }
 
-.hero-mesh-bg::before,
-.hero-mesh-bg::after {
-  content: "";
+/* ═══════════════════════════════════════
+   HERO GROUND GLOW
+   A single fixed light source low-center, not a drifting
+   gradient-orb soup — the animated blob-cluster trope reads
+   as generic AI-SaaS filler, so this stays still and quiet.
+═══════════════════════════════════════ */
+.hero-mesh-bg {
   position: absolute;
-  inset: -50%;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, var(--mesh-1), transparent 55%),
-    radial-gradient(ellipse 70% 50% at 80% 70%, var(--mesh-2), transparent 50%),
-    radial-gradient(ellipse 60% 45% at 50% 50%, var(--mesh-3), transparent 45%);
-  animation: hero-mesh-drift 18s ease-in-out infinite alternate;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: radial-gradient(ellipse 70% 45% at 50% 100%, rgba(162, 228, 53, 0.07), transparent 60%);
 }
 
-.hero-mesh-bg::after {
-  animation-delay: -9s;
-  animation-duration: 22s;
-  opacity: 0.85;
+/* ═══════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+═══════════════════════════════════════ */
+.font-display {
+  font-family: var(--font-display);
 }
 
-@keyframes hero-mesh-drift {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  100% {
-    transform: translate(3%, 2%) rotate(3deg) scale(1.05);
-  }
+.font-serif {
+  font-family: var(--font-serif);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-mesh-bg::before,
-  .hero-mesh-bg::after {
-    animation: none;
-  }
+/* Nivora sets its oversized project names in Noto Serif Balinese */
+.font-balinese {
+  font-family: var(--font-balinese);
 }
 
-.skill-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.font-editorial-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
 }
 
-.skill-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--hover-color-border) !important;
-  box-shadow: 0 10px 25px -5px var(--hover-color-glow), 0 8px 10px -6px var(--hover-color-glow);
+/* Nivora's display headings run tight and slightly negative-tracked */
+.headline-tight {
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-primary {
+  background: linear-gradient(135deg, #FFFFFF 0%, #A2E435 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ═══════════════════════════════════════
+   SOFT SHELL CARDS (40px / 24px)
+═══════════════════════════════════════ */
+.glass-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(162, 228, 53, 0.35);
+  background: var(--color-surface-2);
+}
+
+.glass-card-violet {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.glass-card-violet:hover {
+  border-color: var(--color-primary);
+}
+
+/* Nivora's standard content shell */
+.nivora-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.nivora-card:hover {
+  border-color: rgba(162, 228, 53, 0.3);
+  background: var(--color-surface-2);
+}
+
+.nivora-card-sm {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card-sm);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.nivora-card-sm:hover {
+  border-color: rgba(162, 228, 53, 0.3);
+  background: var(--color-surface-2);
+}
+
+/* ═══════════════════════════════════════
+   PILL BUTTONS
+═══════════════════════════════════════ */
+.btn-glow {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  color: #000000;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.btn-glow:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.btn-glow:active { transform: translateY(0); }
+
+.btn-outline-glow {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  font-weight: 600;
+  transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.btn-outline-glow:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════
+   CHECKLIST ROW (Nivora "Our service" feature list)
+═══════════════════════════════════════ */
+.checklist-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--color-border-faint);
+  transition: padding-left 0.25s ease;
+}
+
+.checklist-row:last-child {
+  border-bottom: none;
+}
+
+.checklist-row:hover {
+  padding-left: 0.35rem;
+}
+
+/* ═══════════════════════════════════════
+   SECTION DIVIDER LINES
+═══════════════════════════════════════ */
+.section-glow-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.12), transparent);
+  margin: 0 auto;
+  max-width: 80%;
+}
+
+/* ═══════════════════════════════════════
+   SECTION EYEBROW PILL (Nivora "Our service" label)
+═══════════════════════════════════════ */
+.eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-subtle);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.eyebrow-pill::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════
+   MARQUEE — edge fade mask
+═══════════════════════════════════════ */
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-strip {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 38s linear infinite;
+}
+
+.marquee-strip:hover { animation-play-state: paused; }
+
+/* ═══════════════════════════════════════
+   PROJECT HOVER LIST (Nivora "↳ VIEW PROJECT")
+═══════════════════════════════════════ */
+.project-row {
+  position: relative;
+  display: block;
+  border-top: 1px solid var(--color-border-subtle);
+  transition: background-color 0.35s ease;
+}
+
+.project-row:last-child {
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.project-row:hover {
+  background: linear-gradient(to right, rgba(162, 228, 53, 0.05), transparent 70%);
+}
+
+.project-row-title {
+  font-family: var(--font-balinese);
+  color: var(--color-text-dim);
+  transition: color 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-row:hover .project-row-title {
+  color: var(--color-text);
+  transform: translateX(1.25rem);
+}
+
+.project-row-cta {
+  font-family: var(--font-mono);
+  opacity: 0;
+  transform: translateX(-0.75rem);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-row:hover .project-row-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Cursor-following preview thumbnail */
+.project-preview {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  width: 320px;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: var(--radius-card-sm);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  transform: translate(-50%, -50%);
+}
+
+/* ═══════════════════════════════════════
+   WORD-BY-WORD SCROLL REVEAL
+═══════════════════════════════════════ */
+.reveal-word {
+  display: inline-block;
+  white-space: pre;
+  will-change: opacity;
+}
+
+/* ═══════════════════════════════════════
+   CURSOR GLOW
+═══════════════════════════════════════ */
+.cursor-glow {
+  pointer-events: none;
+  position: fixed;
+  z-index: 9999;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--cursor-glow-rgb), 0.08) 0%,
+    rgba(var(--cursor-glow-rgb), 0.02) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════
+   SCROLL INDICATOR
+═══════════════════════════════════════ */
+@keyframes bounce-y {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+.animate-bounce-y { animation: bounce-y 1.8s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-primary);
+  z-index: 9998;
+  transform-origin: left;
+}
+
+/* ═══════════════════════════════════════
+   STATUS BADGE (pill)
+═══════════════════════════════════════ */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.01em;
+}
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #A2E435;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ═══════════════════════════════════════
+   FORM INPUTS
+═══════════════════════════════════════ */
+.ds-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.85rem 1.25rem;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.ds-input::placeholder { color: var(--color-text-faint); }
+
+.ds-input:focus {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Multi-line fields keep the soft shell radius instead of a pill */
+textarea.ds-input {
+  border-radius: var(--radius-card-sm);
 }

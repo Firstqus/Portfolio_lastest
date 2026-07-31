@@ -20,7 +20,7 @@ export default function Home() {
       <div className="bg-network" aria-hidden />
       <main
         id="main-content"
-        className="relative z-10 min-h-screen text-slate-900 dark:text-slate-50"
+        className="relative z-10 min-h-screen text-white"
       >
         <Navbar />
 

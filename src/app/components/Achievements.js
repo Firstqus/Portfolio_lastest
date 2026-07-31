@@ -166,7 +166,7 @@ export default function Achievements() {
               eyebrow="Achievements"
               title={
                 <>
-                  My <span className="text-sky-500">Achievements</span>
+                  My <span className="font-serif italic font-normal text-[#A2E435]">Achievements</span>
                 </>
               }
               description="A collection of certificates and awards reflecting my continuous learning and growth."
@@ -183,9 +183,9 @@ export default function Achievements() {
                   placeholder="Search certificates..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white/50 px-6 py-4 pl-12 text-sm shadow-sm outline-none transition-all focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                  className="w-full rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] px-6 py-3.5 pl-12 text-sm text-white outline-none transition-all focus:border-[#A2E435] placeholder-[rgba(255,255,255,0.4)]"
                 />
-                <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[rgba(255,255,255,0.4)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -196,9 +196,9 @@ export default function Achievements() {
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`rounded-full px-5 py-2 text-xs font-semibold transition-all ${activeCategory === cat
-                      ? "bg-sky-500 text-white shadow-lg shadow-sky-500/25"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+                    className={`rounded-full px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 ${activeCategory === cat
+                      ? "bg-[#A2E435] text-black shadow-sm"
+                      : "border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] text-[rgba(255,255,255,0.75)] hover:border-[rgba(255,255,255,0.2)] hover:text-white"
                       }`}
                   >
                     {cat}
@@ -218,11 +218,11 @@ export default function Achievements() {
             {filtered.length > 0 ? (
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filtered.map((item, idx) => (
-                  <AchievementCard key={idx} item={item} onSelect={() => handleSelect(item)} />
+                  <AchievementCard key={idx} item={item} variant="grid" onSelect={() => handleSelect(item)} />
                 ))}
               </div>
             ) : (
-              <div className="py-20 text-center text-slate-500">
+              <div className="py-20 text-center text-[rgba(255,255,255,0.4)] font-mono text-xs uppercase tracking-wider">
                 No certificates found matching your search.
               </div>
             )}
@@ -288,39 +288,40 @@ function MarqueeRow({ items, direction = "left", speed = 50, onSelect }) {
   )
 }
 
-function AchievementCard({ item, onSelect }) {
+function AchievementCard({ item, onSelect, variant = "marquee" }) {
   return (
     <div
       onClick={onSelect}
-      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-sky-500/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5"
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] transition-colors duration-300 hover:border-[#A2E435]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Grid view leans toward Nivora's near-square product-gallery tiles */}
+      <div className={`relative overflow-hidden bg-black/25 ${variant === "grid" ? "aspect-[5/4]" : "aspect-[4/3]"}`}>
         <Image
           src={item.image}
           alt={item.title}
           fill
           sizes="280px"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-102"
         />
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-          <span className="rounded-full bg-slate-900/80 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
+          <span className="rounded-full bg-black border border-[rgba(255,255,255,0.12)] px-2 py-0.5 text-[9px] font-mono font-bold text-[#A2E435] uppercase tracking-wider">
             {item.category}
           </span>
-          <span className="rounded-full bg-white/20 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+          <span className="rounded-full bg-black border border-[rgba(255,255,255,0.12)] px-2 py-0.5 text-[9px] font-mono font-bold text-white uppercase tracking-wider">
             {item.date}
           </span>
         </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-sky-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px]">
-          <button className="rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 shadow-lg transform translate-y-4 transition-transform duration-300 group-hover:translate-y-0">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 backdrop-blur-[1px]">
+          <button className="rounded-full border border-[#A2E435] bg-[#A2E435] text-black px-4 py-2 text-[11px] font-bold uppercase tracking-wider transform translate-y-3 transition-all duration-300 group-hover:translate-y-0 hover:scale-105">
             Quick View
           </button>
         </div>
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-50 line-clamp-1 group-hover:text-sky-500 transition-colors">
+        <h3 className="font-display text-sm font-bold text-white line-clamp-1 group-hover:text-[#A2E435] transition-colors">
           {item.title}
         </h3>
-        <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">
+        <p className="mt-1 text-[10px] text-[rgba(255,255,255,0.75)]">
           {item.issuer}
         </p>
       </div>
@@ -340,18 +341,18 @@ function CertificateModal({ item, onClose, onPrev, onNext }) {
   }, [onClose, onPrev, onNext])
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
       <div
         className="absolute inset-0 cursor-pointer"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-4 rounded-3xl border border-slate-200/20 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/90 md:p-8">
+      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-4 rounded-[32px] border border-[rgba(255,255,255,0.1)] bg-[#000000] p-6 shadow-2xl backdrop-blur-xl md:p-8">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 active:scale-95"
+          className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(255,255,255,0.12)] bg-black/60 text-white transition hover:bg-black active:scale-95"
           aria-label="Close modal"
         >
           ✕
@@ -362,14 +363,14 @@ function CertificateModal({ item, onClose, onPrev, onNext }) {
           {/* Prev Arrow */}
           <button
             onClick={onPrev}
-            className="absolute left-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white shadow transition hover:bg-white/25 active:scale-95 sm:-left-4 md:-left-6"
+            className="absolute left-2 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(255,255,255,0.12)] bg-black/60 text-white shadow-lg transition hover:bg-black active:scale-95 sm:-left-4 md:-left-6"
             aria-label="Previous certificate"
           >
             ←
           </button>
 
           {/* Certificate Image Container */}
-          <div className="relative aspect-[4/3] w-full max-w-[580px] overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+          <div className="relative aspect-[4/3] w-full max-w-[580px] overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-black/40">
             <Image
               src={item.image}
               alt={item.title}
@@ -382,7 +383,7 @@ function CertificateModal({ item, onClose, onPrev, onNext }) {
           {/* Next Arrow */}
           <button
             onClick={onNext}
-            className="absolute right-2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white shadow transition hover:bg-white/25 active:scale-95 sm:-right-4 md:-right-6"
+            className="absolute right-2 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(255,255,255,0.12)] bg-black/60 text-white shadow-lg transition hover:bg-black active:scale-95 sm:-right-4 md:-right-6"
             aria-label="Next certificate"
           >
             →
@@ -391,9 +392,9 @@ function CertificateModal({ item, onClose, onPrev, onNext }) {
 
         {/* Info */}
         <div className="text-center text-white mt-2 max-w-xl">
-          <h3 className="text-base font-bold sm:text-lg">{item.title}</h3>
-          <p className="text-xs text-slate-400 mt-1 sm:text-sm">{item.issuer} • {item.date}</p>
-          <span className="mt-2 inline-block rounded-full bg-sky-500/20 px-3 py-1 text-[10px] font-semibold text-sky-400">
+          <h3 className="font-display text-base font-bold sm:text-lg">{item.title}</h3>
+          <p className="text-xs text-[rgba(255,255,255,0.75)] mt-1 sm:text-sm">{item.issuer} • {item.date}</p>
+          <span className="mt-2.5 inline-block rounded-full bg-[rgba(162,228,53,0.08)] border border-[rgba(162,228,53,0.2)] px-3 py-0.5 text-[9px] font-mono font-bold text-[#A2E435] uppercase tracking-wider">
             {item.category}
           </span>
         </div>

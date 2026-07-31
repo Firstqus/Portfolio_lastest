@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 import SectionHeading from "./SectionHeading"
 
@@ -85,13 +85,25 @@ const projects = [
   },
 ]
 
+const LIME_TECH = new Set(["Unity", "Game Design", "Next.js"])
+
+function ctaLabel(url) {
+  if (url.includes("itch.io")) return "Play on itch.io"
+  if (url.includes("vercel.app")) return "Launch App"
+  return "View on GitHub"
+}
+
 function TechTags({ tech, className = "" }) {
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {tech.map((t) => (
         <span
           key={t}
-          className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:text-sky-200"
+          className={`rounded-full border px-3 py-0.5 font-mono text-[10px] ${
+            LIME_TECH.has(t)
+              ? "border-[rgba(162,228,53,0.25)] bg-[rgba(162,228,53,0.06)] text-[#A2E435]"
+              : "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] text-[rgba(255,255,255,0.6)]"
+          }`}
         >
           {t}
         </span>
@@ -100,157 +112,138 @@ function TechTags({ tech, className = "" }) {
   )
 }
 
-function ProjectCard({ project }) {
-  const [slideIndex, setSlideIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const hasGallery = project.gallery && project.gallery.length > 0
+/** Cursor-following thumbnail, Nivora-style. Cycles the project gallery. */
+function HoverPreview({ project, position }) {
+  const [slide, setSlide] = useState(0)
 
   useEffect(() => {
-    if (!hasGallery || paused) return
-    const t = setInterval(() => {
-      setSlideIndex((i) => (i + 1) % project.gallery.length)
-    }, 3000)
+    if (!project?.gallery?.length) return
+    const t = setInterval(
+      () => setSlide((i) => (i + 1) % project.gallery.length),
+      1400
+    )
     return () => clearInterval(t)
-  }, [hasGallery, paused, project.gallery])
+  }, [project])
 
-  const imageSrc = hasGallery ? project.gallery[slideIndex] : project.image
-  const imageClass =
-    project.imageFit === "contain" ? "object-contain p-6" : "object-cover"
+  if (!project) return null
+
+  const src = project.gallery?.length ? project.gallery[slide] : project.image
 
   return (
-    <article
-      className="group overflow-hidden rounded-3xl border border-slate-200/70 bg-white/60 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-500/40 dark:border-white/10 dark:bg-white/5"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+    <div
+      className="project-preview hidden bg-black md:block"
+      style={{ left: position.x, top: position.y }}
+      aria-hidden
     >
-      <div
-        className={`relative overflow-hidden bg-slate-50 dark:bg-white/5 ${project.aspectClass}`}
-      >
-        <Image
-          src={imageSrc}
-          alt={`${project.title} screenshot`}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className={imageClass}
-        />
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="320px"
+        className={project.imageFit === "contain" ? "object-contain p-4" : "object-cover"}
+      />
+    </div>
+  )
+}
 
-        {hasGallery && (
-          <>
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-              {project.gallery.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={`Show image ${i + 1}`}
-                  onClick={() => setSlideIndex(i)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === slideIndex
-                      ? "w-5 bg-sky-500"
-                      : "w-1.5 bg-white/60 hover:bg-white"
-                  }`}
-                />
-              ))}
-            </div>
-            <button
-              type="button"
-              aria-label="Previous image"
-              onClick={() =>
-                setSlideIndex(
-                  (i) => (i - 1 + project.gallery.length) % project.gallery.length
-                )
-              }
-              className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/50 text-white opacity-0 transition group-hover:opacity-100"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              aria-label="Next image"
-              onClick={() =>
-                setSlideIndex((i) => (i + 1) % project.gallery.length)
-              }
-              className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/50 text-white opacity-0 transition group-hover:opacity-100"
-            >
-              ›
-            </button>
-          </>
-        )}
+function ProjectRow({ project, index, onEnter, onLeave }) {
+  return (
+    <a
+      href={project.github}
+      target="_blank"
+      rel="noreferrer"
+      className="project-row group px-2 py-8 sm:px-6"
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+    >
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-10">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-4">
+            <span className="font-mono text-[11px] text-[rgba(255,255,255,0.35)]">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <h3 className="project-row-title headline-tight text-4xl sm:text-5xl md:text-6xl">
+              {project.title}
+            </h3>
+          </div>
+
+          <div className="mt-4 md:pl-10">
+            <TechTags tech={project.tech} />
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[rgba(255,255,255,0.5)] line-clamp-2">
+              {project.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Mobile gets a static thumbnail since there is no hover */}
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-black md:hidden">
+          <Image
+            src={project.image}
+            alt={`${project.title} screenshot`}
+            fill
+            sizes="100vw"
+            className={project.imageFit === "contain" ? "object-contain p-4" : "object-cover"}
+          />
+        </div>
+
+        <span className="project-row-cta shrink-0 whitespace-nowrap text-[11px] uppercase tracking-[0.12em] text-[#A2E435]">
+          ↳ {ctaLabel(project.github)}
+        </span>
       </div>
-
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50">
-          {project.title}
-        </h3>
-        <TechTags tech={project.tech} className="mt-3" />
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-          {project.description}
-        </p>
-
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:border-sky-500/60 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-50"
-        >
-          <span>
-            {project.github.includes("itch.io")
-              ? "Play on itch.io"
-              : project.github.includes("vercel.app")
-                ? "Launch App"
-                : "View on GitHub"}
-          </span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-            aria-hidden
-          >
-            <path d="M9 18l-6 3 3-6 13-13a2 2 0 0 1 3 3L9 18z" />
-            <path d="M15 6l3 3" />
-          </svg>
-        </a>
-      </div>
-    </article>
+    </a>
   )
 }
 
 export default function Projects() {
   const [showAll, setShowAll] = useState(false)
+  const [hovered, setHovered] = useState(null)
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+  const listRef = useRef(null)
+
   const visibleProjects = useMemo(
     () => (showAll ? projects : projects.slice(0, 4)),
     [showAll]
   )
+
+  const onMouseMove = (e) => {
+    setPos({ x: e.clientX, y: e.clientY })
+  }
 
   return (
     <section id="projects" className="mx-auto max-w-6xl px-8 py-24">
       <FadeInWhenVisible>
         <SectionHeading
           eyebrow="Featured Projects"
-          title="A selection of projects where I build and ship."
+          title={
+            <>
+              Selected <span className="font-serif font-normal italic text-[#A2E435]">Works</span>
+            </>
+          }
         />
       </FadeInWhenVisible>
 
-      <div className="mt-12 grid gap-8 md:grid-cols-2">
+      <div ref={listRef} className="mt-14" onMouseMove={onMouseMove}>
         {visibleProjects.map((project, idx) => (
-          <FadeInWhenVisible key={project.title} delay={idx * 0.06}>
-            <ProjectCard project={project} />
+          <FadeInWhenVisible key={project.title} delay={idx * 0.05}>
+            <ProjectRow
+              project={project}
+              index={idx}
+              onEnter={() => setHovered(project)}
+              onLeave={() => setHovered(null)}
+            />
           </FadeInWhenVisible>
         ))}
       </div>
+
+      {/* keyed so a new project remounts the preview at its first frame */}
+      <HoverPreview key={hovered?.title ?? "none"} project={hovered} position={pos} />
 
       {projects.length > 4 && (
         <div className="mt-12 flex justify-center">
           <button
             type="button"
             onClick={() => setShowAll(!showAll)}
-            className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-6 py-3 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/20"
+            className="btn-outline-glow inline-flex items-center gap-2 px-7 py-3 text-sm"
           >
             <span>{showAll ? "Show Less" : "View More Projects"}</span>
             <svg

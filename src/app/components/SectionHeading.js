@@ -10,22 +10,17 @@ export default function SectionHeading({
 
   return (
     <div className={`flex flex-col ${alignClass} ${className}`}>
-      {eyebrow && (
-        <p className="text-sm font-semibold tracking-widest text-sky-600 uppercase dark:text-sky-300">
-          {eyebrow}
-        </p>
-      )}
-      <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+      {eyebrow && <span className="eyebrow-pill">{eyebrow}</span>}
+      <h2 className="font-display headline-tight mt-5 text-4xl font-medium text-white sm:text-5xl md:text-[3.4rem]">
         {title}
       </h2>
       {description && (
         <p
-          className={`mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-300 ${align === "center" ? "mx-auto" : ""}`}
+          className={`mt-5 max-w-2xl text-base leading-relaxed text-[rgba(255,255,255,0.5)] ${align === "center" ? "mx-auto" : ""}`}
         >
           {description}
         </p>
       )}
-      <div className="mt-3 h-1 w-16 rounded bg-sky-500/30" aria-hidden />
     </div>
   )
 }

@@ -44,7 +44,7 @@ export default function IntroLoader({ children }) {
 
       {showLoader === null && (
         <div
-          className="fixed inset-0 z-[200] bg-zinc-900"
+          className="fixed inset-0 z-[200] bg-[#000000]"
           aria-busy="true"
           aria-label="Loading"
         />
@@ -54,7 +54,7 @@ export default function IntroLoader({ children }) {
         {showLoader === true && (
           <motion.div
             key="intro"
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-zinc-900"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-[#000000]"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
@@ -62,15 +62,15 @@ export default function IntroLoader({ children }) {
             aria-label="Welcome"
           >
             <motion.div
-              className="h-10 w-10 rounded-full border-2 border-sky-500 border-t-transparent"
+              className="h-10 w-10 rounded-full border-2 border-[#A2E435] border-t-transparent"
               animate={{ rotate: 360 }}
               transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
             />
-            <p className="text-sm tracking-wide text-zinc-400">Loading portfolio…</p>
+            <p className="font-mono text-xs tracking-widest text-[rgba(255,255,255,0.75)] uppercase">Loading portfolio…</p>
             <button
               type="button"
               onClick={dismiss}
-              className="mt-2 rounded-full border border-white/15 px-4 py-2 text-xs font-medium text-zinc-400 transition hover:border-sky-500/40 hover:text-sky-300"
+              className="mt-2 rounded-full border border-[rgba(255,255,255,0.12)] bg-transparent px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider text-[rgba(255,255,255,0.75)] transition-all hover:border-[#A2E435] hover:text-[#A2E435]"
             >
               Skip intro
             </button>

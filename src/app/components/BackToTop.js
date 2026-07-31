@@ -19,7 +19,7 @@ export default function BackToTop() {
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Back to top"
-      className="fixed bottom-6 right-6 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/70 bg-white/80 text-slate-700 shadow-lg backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-500/40 hover:text-sky-600 dark:border-white/10 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:text-sky-300"
+      className="fixed bottom-6 right-6 z-50 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.75)] shadow-2xl transition hover:-translate-y-0.5 hover:border-[#A2E435] hover:text-white"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ export default function BackToTop() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="h-5 w-5"
+        className="h-4 w-4"
         aria-hidden
       >
         <path d="M12 19V5" />
