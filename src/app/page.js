@@ -7,6 +7,7 @@ import Skills from "./components/Skills"
 import Contact from "./components/Contact"
 import IntroLoader from "./components/IntroLoader"
 import CursorGlow from "./components/CursorGlow"
+import ParticleNetwork from "./components/ParticleNetwork"
 import About from "./components/About"
 import Leadership from "./components/Leadership"
 import Achievements from "./components/Achievements"
@@ -17,7 +18,7 @@ export default function Home() {
   return (
     <IntroLoader>
       <CursorGlow />
-      <div className="bg-network" aria-hidden />
+      <ParticleNetwork />
       <main
         id="main-content"
         className="relative z-10 min-h-screen text-white"

@@ -1,6 +1,8 @@
 "use client"
 
 import Image from "next/image"
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion"
+import { useRef } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 import ScrollRevealText from "./ScrollRevealText"
 import SectionHeading from "./SectionHeading"
@@ -29,6 +31,16 @@ const stats = [
 ]
 
 export default function About() {
+  const photoRef = useRef(null)
+  const reduce = useReducedMotion()
+  // Photo drifts a few percent slower/faster than the page as it crosses the
+  // viewport, giving the block a slight sense of depth on scroll.
+  const { scrollYProgress } = useScroll({
+    target: photoRef,
+    offset: ["start end", "end start"],
+  })
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"])
+
   return (
     <section id="about" className="relative mx-auto max-w-6xl px-8 py-24">
 
@@ -58,16 +70,21 @@ export default function About() {
       {/* Photo + stats — gallery-tile rhythm (Nivora's product gallery grid) */}
       <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-6 lg:grid-cols-12">
         <FadeInWhenVisible className="col-span-2 sm:col-span-6 lg:col-span-8">
-          <div className="relative h-full overflow-hidden rounded-[32px] border border-[rgba(255,255,255,0.1)] bg-black/40">
+          <div ref={photoRef} className="relative h-full overflow-hidden rounded-[32px] border border-[rgba(255,255,255,0.1)] bg-black/40">
             <div className="relative aspect-[16/9] lg:aspect-auto lg:h-full lg:min-h-[280px]">
-              <Image
-                src="/mine3.jpg"
-                alt="Patawee Kimhia"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 66vw"
-                className="object-cover transition-transform duration-500 hover:scale-105"
-              />
+              <motion.div
+                className="absolute inset-0"
+                style={reduce ? undefined : { y: photoY, scale: 1.12 }}
+              >
+                <Image
+                  src="/mine3.jpg"
+                  alt="Patawee Kimhia"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </motion.div>
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.9)] via-transparent to-transparent" />
             </div>
           </div>

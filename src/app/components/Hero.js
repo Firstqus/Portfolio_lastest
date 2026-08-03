@@ -1,5 +1,7 @@
 "use client"
 
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion"
+import { useRef } from "react"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 import { HERO_SUMMARY, SOCIAL_LINKS } from "../constants/social"
 import { TypeAnimation } from "react-type-animation"
@@ -20,8 +22,23 @@ const ROLES = [
 ]
 
 export default function Hero() {
+  const ref = useRef(null)
+  const reduce = useReducedMotion()
+
+  // Headline shrinks and fades over exactly one screen-height of scroll,
+  // like the front page recedes as the site continues below it.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  })
+  const headlineScale = useTransform(scrollYProgress, [0, 1], [1, 0.6])
+  const headlineOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3])
+
   return (
-    <div className="relative z-10 mx-auto w-full max-w-5xl px-6 py-32 text-center">
+    <div
+      ref={ref}
+      className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center px-6 py-24 text-center"
+    >
       <FadeInWhenVisible y={30}>
         <div className="flex flex-col items-center gap-7">
 
@@ -50,11 +67,14 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Oversized headline */}
-          <h1 className="font-display headline-tight text-6xl font-medium text-white sm:text-7xl md:text-8xl lg:text-[7rem]">
+          {/* Oversized headline — scales down and fades as the page scrolls past it */}
+          <motion.h1
+            style={reduce ? undefined : { scale: headlineScale, opacity: headlineOpacity }}
+            className="font-display headline-tight text-6xl font-medium text-white sm:text-7xl md:text-8xl lg:text-[7rem]"
+          >
             Patawee{" "}
             <span className="font-serif font-normal italic text-[#A2E435]">Kimhia</span>
-          </h1>
+          </motion.h1>
 
           {/* Summary */}
           <p className="max-w-2xl text-base leading-relaxed text-[rgba(255,255,255,0.5)]">

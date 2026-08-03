@@ -1,11 +1,20 @@
 "use client"
 
 import Image from "next/image"
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion"
 import FadeInWhenVisible from "./FadeInWhenVisible"
 import SectionHeading from "./SectionHeading"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 export default function Leadership() {
+  const photoRef = useRef(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: photoRef,
+    offset: ["start end", "end start"],
+  })
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"])
+
   const slides = [
     {
       image: "/FromChangs.jpg",
@@ -72,16 +81,21 @@ export default function Leadership() {
         {/* Image - Editorial border */}
         <FadeInWhenVisible className="lg:col-span-5">
           <div className="relative">
-            <div className="relative overflow-hidden rounded-[32px] border border-[rgba(255,255,255,0.1)] bg-black/40">
+            <div ref={photoRef} className="relative overflow-hidden rounded-[32px] border border-[rgba(255,255,255,0.1)] bg-black/40">
               <div className="relative h-[280px] w-full">
-                <Image
-                  src={current.image}
-                  alt={current.title}
-                  fill
-                  priority={index === 0}
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover transition-all duration-500"
-                />
+                <motion.div
+                  className="absolute inset-0"
+                  style={reduce ? undefined : { y: photoY, scale: 1.12 }}
+                >
+                  <Image
+                    src={current.image}
+                    alt={current.title}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover transition-all duration-500"
+                  />
+                </motion.div>
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#000000] to-transparent" />
                 <div className="absolute bottom-4 left-4">
                   <span className="rounded-full bg-black border border-[rgba(255,255,255,0.15)] px-2.5 py-1 font-mono text-[9px] font-bold text-white uppercase tracking-wider">
